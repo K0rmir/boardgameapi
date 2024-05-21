@@ -1,0 +1,76 @@
+// Data Model Interfaces
+import { BaseBoardGame, BoardGame } from "./boardgame.interface";
+import { Boardgames } from "./boardgames.interface";
+
+
+// In-Memory Store
+
+let boardgames: Boardgames = {
+    1: {
+        id: 1,
+        name: "Catan",
+        description: "Catan is a cool game.",
+        playerCount: 3 - 5
+    },
+    2: {
+        id: 2,
+        name: "Wyrmspan",
+        description: "Here there be dragons!",
+        playerCount: 1 - 5
+    },
+    3: {
+        id: 3,
+        name: "Everdell",
+        description: "Animals init.",
+        playerCount: 1 - 4
+    },
+}
+
+//  Service Methods
+
+// Returns whole BoardGames store object //
+export const findAll = async (): Promise<Boardgames> => Object.values(boardgames)
+
+// Return single element with id as parameter
+export const find = async (id: number): Promise<BoardGame> => boardgames[id];
+
+// Create a new boardgame //
+export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> => {
+    const id = new Date().valueOf();
+    boardgames[id] = {
+        id,
+        ...newBoardGame,
+    };
+    return boardgames[id]
+};
+
+// Update a board game. //
+
+// Method recieves boardgame id and boardGameUpdate object as arguments. Use id to find boardgame in the store and update it with the properties of boardGameUpdate.
+export const update = async (
+    id: number,
+    boardGameUpdate: BaseBoardGame
+): Promise<BoardGame | null> => {
+    const boardGame = await find(id);
+
+    if (!boardGame) {
+        return null;
+    }
+
+    boardgames[id] = { id, ...boardGameUpdate };
+
+    return boardgames[id]
+}
+
+// Delete board game from store //
+export const remove = async (id: number): Promise<null | void> => {
+    const boardGame = await find(id);
+
+    if (!boardGame) {
+        return null
+    }
+    delete boardgames[id]
+
+}
+
+
