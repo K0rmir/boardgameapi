@@ -5,26 +5,29 @@ import { Boardgames } from "./boardgames.interface";
 
 // In-Memory Store
 
-let boardgames: Boardgames = {
-    1: {
+let boardgames: Boardgames = [
+    {
         id: 1,
         name: "Catan",
         description: "Catan is a cool game.",
-        playerCount: 3 - 5
+        minPlayers: 3,
+        maxPlayers: 5
     },
-    2: {
+    {
         id: 2,
         name: "Wyrmspan",
         description: "Here there be dragons!",
-        playerCount: 1 - 5
+        minPlayers: 1,
+        maxPlayers: 5
     },
-    3: {
+    {
         id: 3,
         name: "Everdell",
         description: "Animals init.",
-        playerCount: 1 - 4
+        minPlayers: 1,
+        maxPlayers: 4
     },
-}
+]
 
 //  Service Methods
 
