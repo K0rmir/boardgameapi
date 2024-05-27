@@ -1,8 +1,7 @@
 // Required External Modules and Interfaces
 import express, { Request, Response } from "express";
 import * as BoardGameService from "./boardgames.service"
-import { BaseBoardGame, BoardGame } from "./boardgame.interface";
-import { Boardgames } from "./boardgames.interface";
+import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
 
 
@@ -12,12 +11,21 @@ export const boardGamesRouter = express.Router();
 
 //  Controller Definitions
 
-
-// GET all boardgames
+// GET all boardgames or filter by maxplayers //
 
 boardGamesRouter.get("/", async (req: Request, res: Response) => {
+    const maxPlayers = req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined
+
+    console.log("Max players = ", maxPlayers)
+
     try {
-        const boardgames: Boardgames = await BoardGameService.findAll()
+        let boardgames;
+
+        if (maxPlayers !== undefined) {
+            boardgames = await BoardGameService.findByMaxPlayers(maxPlayers)
+        } else {
+            boardgames = await BoardGameService.findAll();
+        }
         res.status(200).send(boardgames);
     } catch (e) {
         res.status(500).send(error)
@@ -41,8 +49,6 @@ boardGamesRouter.get("/:id", async (req: Request, res: Response) => {
         res.status(500).send(error)
     }
 })
-
-
 
 
 // POST items

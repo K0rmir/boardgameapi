@@ -7,5 +7,6 @@ export interface BaseBoardGame {
 
 export interface BoardGame extends BaseBoardGame {
     id: number;
-
 }
+
+export type Boardgames = BoardGame[]

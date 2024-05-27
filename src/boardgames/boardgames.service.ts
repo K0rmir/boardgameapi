@@ -1,7 +1,5 @@
 // Data Model Interfaces
-import { BaseBoardGame, BoardGame } from "./boardgame.interface";
-import { Boardgames } from "./boardgames.interface";
-
+import { BaseBoardGame, BoardGame, Boardgames } from "./boardgame.interface";
 
 // In-Memory Store
 
@@ -27,15 +25,26 @@ let boardgames: Boardgames = [
         minPlayers: 1,
         maxPlayers: 4
     },
+    {
+        id: 4,
+        name: "Sky Team",
+        description: "Get off my plane!.",
+        minPlayers: 2,
+        maxPlayers: 2
+    },
 ]
 
 //  Service Methods
 
 // Returns whole BoardGames store object //
-export const findAll = async (): Promise<Boardgames> => Object.values(boardgames)
+export const findAll = async (): Promise<Boardgames> => boardgames
 
 // Return single element with id as parameter
 export const find = async (id: number): Promise<BoardGame> => boardgames[id];
+
+// Return board games with a max player count
+
+export const findByMaxPlayers = async (maxPlayers: number): Promise<Boardgames> => boardgames.filter(game => game.maxPlayers === maxPlayers)
 
 // Create a new boardgame //
 export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> => {
