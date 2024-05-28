@@ -16,8 +16,6 @@ export const boardGamesRouter = express.Router();
 boardGamesRouter.get("/", async (req: Request, res: Response) => {
     const maxPlayers = req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined
 
-    console.log("Max players = ", maxPlayers)
-
     try {
         let boardgames;
 
@@ -38,7 +36,7 @@ boardGamesRouter.get("/:id", async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
 
     try {
-        const boardgame: BoardGame = await BoardGameService.find(id)
+        const boardgame: BoardGame[] = await BoardGameService.find(id)
 
         if (boardgame) {
             return res.status(200).send(boardgame)
