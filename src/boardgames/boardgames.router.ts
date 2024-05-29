@@ -10,6 +10,24 @@ export const boardGamesRouter = express.Router();
 
 //  Controller Definitions
 
+// Helper function to build pagination links //
+
+const buildPaginationLinks = (req: Request, page: number, totalPages: number): { nextPage: string | null, prevPage: string | null } => {
+    const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`
+    const query = new URLSearchParams(req.query as any);
+
+    // Build next page URL
+    query.set('page', (page + 1).toString());
+    const nextPage = page < totalPages ? `${baseUrl}?${query.toString()}` : null;
+
+    // Build previous page URL
+    query.set('page', (page - 1).toString());
+    const prevPage = page > 1 ? `${baseUrl}?${query.toString()}` : null;
+
+    return { nextPage, prevPage };
+};
+
+
 // GET all boardgames or filter by maxplayers //
 
 boardGamesRouter.get("/", async (req: Request, res: Response) => {
@@ -32,8 +50,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
         }
 
         const totalPages = Math.ceil(totalCount / limit); // declare total number of page here for pagination metadata
-        const nextPage = page < totalPages ? page + 1 : null; // calculate next page
-        const prevPage = page > 1 ? page - 1 : null; // calculate previous page
+        const { nextPage, prevPage } = buildPaginationLinks(req, page, totalPages)
 
         res.status(200).send({ // send object of pagination metadata and boardgames results as response
             totalCount,
