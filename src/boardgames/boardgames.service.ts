@@ -4,6 +4,8 @@ import { db } from "../lib/db"
 
 // In-Memory Store
 
+// This will be deleted eventually when endpoints for adding/updating/deleting are added
+
 let boardgames: Boardgames = [
     {
         id: 0,
@@ -37,11 +39,33 @@ let boardgames: Boardgames = [
 
 //  Service Methods
 
-// Fetch all BoardGames  //
-export const findAll = async (): Promise<Boardgames> => {
-    console.log("Fetching all games in database")
+// Get total count of all rows in database for pagination metadata //
+export const getTotalCount = async (): Promise<number> => {
     try {
-        const res = await db.query('SELECT * FROM boardgames');
+        const res = await db.query('SELECT COUNT(*) FROM boardgames');
+        return parseInt(res.rows[0].count, 10); // total number is calculated here
+    } catch (error) {
+        console.error("Database query error:", error)
+        throw error;
+    }
+}
+
+// Get total count of all rows of maxplayers for pagination metadata //
+export const getTotalCountByMaxPlayers = async (maxPlayers: number): Promise<number> => {
+    try {
+        const res = await db.query('SELECT COUNT(*) FROM boardgames WHERE max_players = $1', [maxPlayers]);
+        return parseInt(res.rows[0].count, 10); // total number is calculated here
+    } catch (error) {
+        console.error("Database query error:", error)
+        throw error;
+    }
+}
+
+// Fetch all BoardGames  //
+export const findAll = async (page: number, limit: number): Promise<Boardgames> => {
+    const offset = (page - 1) * limit;
+    try {
+        const res = await db.query('SELECT * FROM boardgames LIMIT $1 OFFSET $2', [limit, offset]);
         return res.rows
     } catch (error) {
         console.error("Database query error: ", error)
@@ -61,11 +85,12 @@ export const find = async (id: number): Promise<BoardGame[]> => {
     }
 };
 
-// Return board games with a max player count
+// Return board games with a max player count using ?maxplayers=x
 
-export const findByMaxPlayers = async (maxPlayers: number): Promise<Boardgames> => {
+export const findByMaxPlayers = async (maxPlayers: number, page: number, limit: number): Promise<Boardgames> => {
+    const offset = (page - 1) * limit;
     try {
-        const res = await db.query('SELECT * FROM boardgames WHERE max_players = $1', [maxPlayers]);
+        const res = await db.query('SELECT * FROM boardgames WHERE max_players = $1 LIMIT $2 OFFSET $3', [maxPlayers, limit, offset]);
         return res.rows
     } catch (error) {
         console.error("Database query error: ", error)
