@@ -57,8 +57,6 @@ export const getTotalCount = async (filters: {
         }
     }
 
-    console.log(query, queryParams)
-
     try {
         const res = await db.query(query, queryParams);
         return parseInt(res.rows[0].count, 10)
@@ -78,11 +76,11 @@ export const findBoardgames = async (filters: {
 
     const offset = (page - 1) * limit;
 
-    let query = 'SELECT * FROM boardgames WHERE 1=1'
+    let query = 'SELECT * FROM boardgames WHERE 1=1' // define base query. WHERE 1=1 is a common SQL technique and allows every condition to be appended with AND without worrying if it's the first condition.
     const queryParams: (number | string)[] = [];
     let paramCount = 1;
 
-    for (const [key, value] of Object.entries(filters)) {
+    for (const [key, value] of Object.entries(filters)) { // Loop through the filters object, if any value is not undefined, append it to the query, then push value to query params for dependancy array
         if (value !== undefined) {
             query += ` AND ${key} = $${paramCount++}`
             queryParams.push(value)
@@ -92,8 +90,6 @@ export const findBoardgames = async (filters: {
     // Add Pagination //
     query += ` LIMIT $${paramCount++} OFFSET $${paramCount++}`
     queryParams.push(limit, offset)
-
-    // console.log(query, queryParams)
 
     try {
         const res = await db.query(query, queryParams);

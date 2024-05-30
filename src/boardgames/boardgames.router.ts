@@ -35,19 +35,13 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
         year_published: req.query.yearpublished ? parseInt(req.query.yearpublished as string, 10) : undefined,
     }
 
-    console.log("Max Players = ", filters.max_players)
-    console.log('Playtime = ', filters.play_time)
-    console.log('Year Published = ', filters.year_published)
-
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
     const limit = 100; // limit how many boardgames are returned per page
 
     try {
-
         const boardgames = await BoardGameService.findBoardgames(filters, page, limit)
         const totalCount = await BoardGameService.getTotalCount(filters);
-
         const totalPages = Math.ceil(totalCount / limit); // declare total number of pages here for pagination metadata
         const { nextPage, prevPage } = buildPaginationLinks(req, page, totalPages) // call helper function to build pagination next/prev page links
 
