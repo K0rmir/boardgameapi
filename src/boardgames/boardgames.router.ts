@@ -29,7 +29,7 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
 // GET all boardgames or filter by maxplayers //
 boardGamesRouter.get("/", async (req: Request, res: Response) => {
 
-    const filters = {
+    const filters = { // define search params/filters by pulling them from the search query
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
         play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,
         year_published: req.query.yearpublished ? parseInt(req.query.yearpublished as string, 10) : undefined,
