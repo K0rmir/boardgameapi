@@ -11,7 +11,6 @@ export const boardGamesRouter = express.Router();
 //  Controller Definitions
 
 // Helper function to build pagination links //
-
 const buildPaginationLinks = (req: Request, page: number, totalPages: number): { nextPage: string | null, prevPage: string | null } => {
     const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`
     const query = new URLSearchParams(req.query as any);
@@ -27,30 +26,30 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
     return { nextPage, prevPage };
 };
 
-
 // GET all boardgames or filter by maxplayers //
-
 boardGamesRouter.get("/", async (req: Request, res: Response) => {
-    const maxPlayers = req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined
+
+    const filters = {
+        max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
+        play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,
+        year_published: req.query.yearpublished ? parseInt(req.query.yearpublished as string, 10) : undefined,
+    }
+
+    console.log("Max Players = ", filters.max_players)
+    console.log('Playtime = ', filters.play_time)
+    console.log('Year Published = ', filters.year_published)
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
     const limit = 100; // limit how many boardgames are returned per page
 
     try {
-        let boardgames;
-        let totalCount;
 
-        if (maxPlayers !== undefined) {
-            boardgames = await BoardGameService.findByMaxPlayers(maxPlayers, page, limit)
-            totalCount = await BoardGameService.getTotalCountByMaxPlayers(maxPlayers) // Call getTotalCountByMaxPlayers from service to count total results
-        } else {
-            boardgames = await BoardGameService.findAll(page, limit);
-            totalCount = await BoardGameService.getTotalCount(); // Call getTotalCount from service to count total results
-        }
+        const boardgames = await BoardGameService.findBoardgames(filters, page, limit)
+        const totalCount = await BoardGameService.getTotalCount(filters);
 
-        const totalPages = Math.ceil(totalCount / limit); // declare total number of page here for pagination metadata
-        const { nextPage, prevPage } = buildPaginationLinks(req, page, totalPages)
+        const totalPages = Math.ceil(totalCount / limit); // declare total number of pages here for pagination metadata
+        const { nextPage, prevPage } = buildPaginationLinks(req, page, totalPages) // call helper function to build pagination next/prev page links
 
         res.status(200).send({ // send object of pagination metadata and boardgames results as response
             totalCount,
@@ -58,7 +57,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
             currentPage: page,
             nextPage,
             prevPage,
-            resultsReturned: limit,
+            resultsReturned: boardgames.length,
             results: boardgames
         });
     } catch (e) {
@@ -67,7 +66,6 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
 })
 
 // GET items/:id
-
 boardGamesRouter.get("/:id", async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
 
@@ -77,7 +75,6 @@ boardGamesRouter.get("/:id", async (req: Request, res: Response) => {
         if (boardgame) {
             return res.status(200).send(boardgame)
         }
-
         res.status(400).send("Game not found.")
     } catch (error) {
         res.status(500).send(error)

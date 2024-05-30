@@ -39,33 +39,64 @@ let boardgames: Boardgames = [
 
 //  Service Methods
 
-// Get total count of all rows in database for pagination metadata //
-export const getTotalCount = async (): Promise<number> => {
-    try {
-        const res = await db.query('SELECT COUNT(*) FROM boardgames');
-        return parseInt(res.rows[0].count, 10); // total number is calculated here
-    } catch (error) {
-        console.error("Database query error:", error)
-        throw error;
-    }
-}
+export const getTotalCount = async (filters: {
+    max_players?: number,
+    play_time?: number,
+    year_published?: number
+},
+): Promise<number> => {
 
-// Get total count of all rows of maxplayers for pagination metadata //
-export const getTotalCountByMaxPlayers = async (maxPlayers: number): Promise<number> => {
-    try {
-        const res = await db.query('SELECT COUNT(*) FROM boardgames WHERE max_players = $1', [maxPlayers]);
-        return parseInt(res.rows[0].count, 10); // total number is calculated here
-    } catch (error) {
-        console.error("Database query error:", error)
-        throw error;
+    let query = 'SELECT COUNT(*) FROM boardgames WHERE 1=1'
+    const queryParams: (number | string)[] = [];
+    let paramCount = 1;
+
+    for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined) {
+            query += ` AND ${key} = $${paramCount++}`
+            queryParams.push(value)
+        }
     }
-}
+
+    console.log(query, queryParams)
+
+    try {
+        const res = await db.query(query, queryParams);
+        return parseInt(res.rows[0].count, 10)
+    } catch (error) {
+        console.error("Database query error: ", error)
+        throw error
+    }
+};
 
 // Fetch all BoardGames  //
-export const findAll = async (page: number, limit: number): Promise<Boardgames> => {
+export const findBoardgames = async (filters: {
+    max_players?: number,
+    play_time?: number,
+    year_published?: number
+},
+    page: number, limit: number): Promise<Boardgames> => {
+
     const offset = (page - 1) * limit;
+
+    let query = 'SELECT * FROM boardgames WHERE 1=1'
+    const queryParams: (number | string)[] = [];
+    let paramCount = 1;
+
+    for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined) {
+            query += ` AND ${key} = $${paramCount++}`
+            queryParams.push(value)
+        }
+    }
+
+    // Add Pagination //
+    query += ` LIMIT $${paramCount++} OFFSET $${paramCount++}`
+    queryParams.push(limit, offset)
+
+    // console.log(query, queryParams)
+
     try {
-        const res = await db.query('SELECT * FROM boardgames LIMIT $1 OFFSET $2', [limit, offset]);
+        const res = await db.query(query, queryParams);
         return res.rows
     } catch (error) {
         console.error("Database query error: ", error)
@@ -84,19 +115,6 @@ export const find = async (id: number): Promise<BoardGame[]> => {
 
     }
 };
-
-// Return board games with a max player count using ?maxplayers=x
-
-export const findByMaxPlayers = async (maxPlayers: number, page: number, limit: number): Promise<Boardgames> => {
-    const offset = (page - 1) * limit;
-    try {
-        const res = await db.query('SELECT * FROM boardgames WHERE max_players = $1 LIMIT $2 OFFSET $3', [maxPlayers, limit, offset]);
-        return res.rows
-    } catch (error) {
-        console.error("Database query error: ", error)
-        throw error
-    }
-}
 
 // Create a new boardgame //
 export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> => {
