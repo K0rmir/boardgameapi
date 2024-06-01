@@ -43,20 +43,28 @@ let boardgames: Boardgames = [
 export const findBoardgames = async (filters: {
     max_players?: number,
     play_time?: number,
-    year_published?: number
+    year_published?: number,
+    game_category?: string[],
+    game_mechanic?: string[],
+    game_designer?: string[]
 },
     page: number, limit: number): Promise<Boardgames> => {
 
     const offset = (page - 1) * limit;
 
     let query = 'SELECT * FROM boardgames WHERE 1=1' // define base query. WHERE 1=1 is a common SQL technique and allows every condition to be appended with AND without worrying if it's the first condition.
-    const queryParams: (number | string)[] = [];
+    const queryParams: (number | string | any)[] = [];
     let paramCount = 1;
 
     for (const [key, value] of Object.entries(filters)) { // Loop through the filters object, if any value is not undefined, append it to the query, then push value to query params for SQL dependancy array
         if (value !== undefined) {
-            query += ` AND ${key} = $${paramCount++}` // '$${paramCount++}' gives us our dynamic values ($1, $2 etc) to prevent SQL injection.
-            queryParams.push(value) // push value to be used in query dependancy array
+            if (typeof value === "number") {
+                query += ` AND ${key} = $${paramCount++}` // '$${paramCount++}' gives us our dynamic values ($1, $2 etc) to prevent SQL injection.
+                queryParams.push(value) // push value to be used in query dependancy array
+            } else if (Array.isArray(value)) {
+                query += ` AND ${key} && $${paramCount++}`
+                queryParams.push(value);
+            }
         }
     }
 
@@ -78,7 +86,10 @@ export const findBoardgames = async (filters: {
 export const getTotalCount = async (filters: {
     max_players?: number,
     play_time?: number,
-    year_published?: number
+    year_published?: number,
+    game_category?: string[],
+    game_mechanic?: string[],
+    game_designer?: string[]
 },
 ): Promise<number> => {
 
@@ -90,6 +101,9 @@ export const getTotalCount = async (filters: {
         if (value !== undefined) {
             query += ` AND ${key} = $${paramCount++}`
             queryParams.push(value)
+        } else if (Array.isArray(value)) {
+            query += ` AND ${key} && $${paramCount++}`
+            queryParams.push(value);
         }
     }
 

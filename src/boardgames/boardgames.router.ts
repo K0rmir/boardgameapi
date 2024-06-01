@@ -33,7 +33,12 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
         play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,
         year_published: req.query.yearpublished ? parseInt(req.query.yearpublished as string, 10) : undefined,
+        game_category: req.query.gamecategory ? req.query.gamecategory.toString().split(",") : undefined,
+        game_mechanic: req.query.gamemechanic ? req.query.gamemechanic.toString().split(",") : undefined,
+        game_designer: req.query.gamedesigner ? req.query.gamedesigner.toString().split(",") : undefined,
     }
+
+    console.log("Query Parameters:", req.query);
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
