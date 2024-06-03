@@ -64,12 +64,13 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
     }
 })
 
-// GET items/:id
-boardGamesRouter.get("/:id", async (req: Request, res: Response) => {
-    const id: number = parseInt(req.params.id, 10);
+// GET boardgame by title //
+
+boardGamesRouter.get("/:gameName", async (req: Request, res: Response) => {
+    const gameName: string | undefined = req.params.gameName?.toString()
 
     try {
-        const boardgame: BoardGame[] = await BoardGameService.find(id)
+        const boardgame: BoardGame[] = await BoardGameService.findGameByTitle(gameName)
 
         if (boardgame) {
             return res.status(200).send(boardgame)

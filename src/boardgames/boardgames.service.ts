@@ -72,8 +72,6 @@ export const findBoardgames = async (filters: {
     query += ` LIMIT $${paramCount++} OFFSET $${paramCount++}` // After loop, appending limit and offset to query to control data
     queryParams.push(limit, offset) // push values to be used in query dependancy array
 
-    // console.log(query, queryParams)
-
     try {
         const res = await db.query(query, queryParams); // query database with dynamic query string (query) and dependancy array (queryParams)
         return res.rows
@@ -112,11 +110,8 @@ export const getTotalCount = async (filters: {
         }
     }
 
-    console.log(query, queryParams)
-
     try {
         const res = await db.query(query, queryParams);
-        console.log(res)
         return parseInt(res.rows[0].count, 10)
     } catch (error) {
         console.error("Database query error: ", error)
@@ -125,9 +120,10 @@ export const getTotalCount = async (filters: {
 };
 
 // Return single element with id as parameter
-export const find = async (id: number): Promise<BoardGame[]> => {
+export const findGameByTitle = async (gameName: string | undefined): Promise<BoardGame[]> => {
+
     try {
-        const res = await db.query('SELECT * FROM boardgames WHERE id = $1', [id]);
+        const res = await db.query('SELECT * FROM boardgames WHERE game_name = $1', [gameName]);
         return res.rows
     } catch (error) {
         console.error("Database query error: ", error)
@@ -149,30 +145,30 @@ export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> =>
 // Update a board game. //
 
 // Method recieves boardgame id and boardGameUpdate object as arguments. Use id to find boardgame in the store and update it with the properties of boardGameUpdate.
-export const update = async (
-    id: number,
-    boardGameUpdate: BaseBoardGame
-): Promise<BoardGame | null> => {
-    const boardGame = await find(id);
+// export const update = async (
+//     id: number,
+//     boardGameUpdate: BaseBoardGame
+// ): Promise<BoardGame | null> => {
+//     const boardGame = await find(id);
 
-    if (!boardGame) {
-        return null;
-    }
+//     if (!boardGame) {
+//         return null;
+//     }
 
-    boardgames[id] = { id, ...boardGameUpdate };
+//     boardgames[id] = { id, ...boardGameUpdate };
 
-    return boardgames[id]
-}
+//     return boardgames[id]
+// }
 
 // Delete board game from store //
-export const remove = async (id: number): Promise<null | void> => {
-    const boardGame = await find(id);
+// export const remove = async (id: number): Promise<null | void> => {
+//     const boardGame = await find(id);
 
-    if (!boardGame) {
-        return null
-    }
-    delete boardgames[id]
+//     if (!boardGame) {
+//         return null
+//     }
+//     delete boardgames[id]
 
-}
+// }
 
 
