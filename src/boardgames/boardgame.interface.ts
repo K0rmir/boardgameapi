@@ -3,6 +3,8 @@ export interface BaseBoardGame {
     description: string
     minPlayers: number
     maxPlayers: number
+
+
 }
 
 export interface BoardGame extends BaseBoardGame {

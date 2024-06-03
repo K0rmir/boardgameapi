@@ -72,7 +72,7 @@ export const findBoardgames = async (filters: {
     query += ` LIMIT $${paramCount++} OFFSET $${paramCount++}` // After loop, appending limit and offset to query to control data
     queryParams.push(limit, offset) // push values to be used in query dependancy array
 
-    console.log(query, queryParams)
+    // console.log(query, queryParams)
 
     try {
         const res = await db.query(query, queryParams); // query database with dynamic query string (query) and dependancy array (queryParams)
@@ -83,6 +83,7 @@ export const findBoardgames = async (filters: {
     }
 };
 
+// Count number of rows returned in query for pagination metadata //
 export const getTotalCount = async (filters: {
     max_players?: number,
     play_time?: number,
@@ -93,22 +94,29 @@ export const getTotalCount = async (filters: {
 },
 ): Promise<number> => {
 
+    console.log("Game Category = ", filters.game_category)
+
     let query = 'SELECT COUNT(*) FROM boardgames WHERE 1=1'
-    const queryParams: (number | string)[] = [];
+    const queryParams: (number | string[])[] = [];
     let paramCount = 1;
 
-    for (const [key, value] of Object.entries(filters)) {
+    for (const [key, value] of Object.entries(filters)) { // Loop through the filters object, if any value is not undefined, append it to the query, then push value to query params for SQL dependancy array
         if (value !== undefined) {
-            query += ` AND ${key} = $${paramCount++}`
-            queryParams.push(value)
-        } else if (Array.isArray(value)) {
-            query += ` AND ${key} && $${paramCount++}`
-            queryParams.push(value);
+            if (typeof value === "number") {
+                query += ` AND ${key} = $${paramCount++}` // '$${paramCount++}' gives us our dynamic values ($1, $2 etc) to prevent SQL injection.
+                queryParams.push(value) // push value to be used in query dependancy array
+            } else if (Array.isArray(value)) {
+                query += ` AND ${key} && $${paramCount++}`
+                queryParams.push(value);
+            }
         }
     }
 
+    console.log(query, queryParams)
+
     try {
         const res = await db.query(query, queryParams);
+        console.log(res)
         return parseInt(res.rows[0].count, 10)
     } catch (error) {
         console.error("Database query error: ", error)
