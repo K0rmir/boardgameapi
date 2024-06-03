@@ -6,36 +6,36 @@ import { db } from "../lib/db"
 
 // This will be deleted eventually when endpoints for adding/updating/deleting are added
 
-let boardgames: Boardgames = [
-    {
-        id: 0,
-        name: "Catan",
-        description: "Catan is a cool game.",
-        minPlayers: 3,
-        maxPlayers: 5
-    },
-    {
-        id: 1,
-        name: "Wyrmspan",
-        description: "Here there be dragons!",
-        minPlayers: 1,
-        maxPlayers: 5
-    },
-    {
-        id: 2,
-        name: "Everdell",
-        description: "Animals init.",
-        minPlayers: 1,
-        maxPlayers: 4
-    },
-    {
-        id: 3,
-        name: "Sky Team",
-        description: "Get off my plane!.",
-        minPlayers: 2,
-        maxPlayers: 2
-    },
-]
+// let boardgames: Boardgames = [
+//     {
+//         id: 0,
+//         name: "Catan",
+//         description: "Catan is a cool game.",
+//         minPlayers: 3,
+//         maxPlayers: 5
+//     },
+//     {
+//         id: 1,
+//         name: "Wyrmspan",
+//         description: "Here there be dragons!",
+//         minPlayers: 1,
+//         maxPlayers: 5
+//     },
+//     {
+//         id: 2,
+//         name: "Everdell",
+//         description: "Animals init.",
+//         minPlayers: 1,
+//         maxPlayers: 4
+//     },
+//     {
+//         id: 3,
+//         name: "Sky Team",
+//         description: "Get off my plane!.",
+//         minPlayers: 2,
+//         maxPlayers: 2
+//     },
+// ]
 
 //  Service Methods
 
@@ -119,7 +119,7 @@ export const getTotalCount = async (filters: {
     }
 };
 
-// Return single element with id as parameter
+// Return single boardgame with game name as parameter //
 export const findGameByTitle = async (gameName: string | undefined): Promise<BoardGame[]> => {
 
     try {
@@ -128,19 +128,40 @@ export const findGameByTitle = async (gameName: string | undefined): Promise<Boa
     } catch (error) {
         console.error("Database query error: ", error)
         throw error;
-
     }
 };
 
-// Create a new boardgame //
-export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> => {
-    const id = new Date().valueOf();
-    boardgames[id] = {
-        id,
-        ...newBoardGame,
-    };
-    return boardgames[id]
+// Count total number of boardgames currently in database //
+export const findTotalGames = async (): Promise<number> => {
+    try {
+        const res = await db.query('SELECT COUNT(*) FROM boardgames');
+        return parseInt(res.rows[0].count, 10)
+    } catch (error) {
+        console.error("Database query error: ", error)
+        throw error
+    }
 };
+
+// Get random game using random number between 1 & total games as OFFSET from DB //
+export const findRandomGame = async (randomNumber: number): Promise<BoardGame[]> => {
+    try {
+        const res = await db.query('SELECT * FROM boardgames OFFSET $1 LIMIT 1', [randomNumber]);
+        return res.rows;
+    } catch (error) {
+        console.error("Database query error: ", error)
+        throw error
+    }
+}
+
+// Create a new boardgame //
+// export const create = async (newBoardGame: BaseBoardGame): Promise<BoardGame> => {
+//     const id = new Date().valueOf();
+//     boardgames[id] = {
+//         id,
+//         ...newBoardGame,
+//     };
+//     return boardgames[id]
+// };
 
 // Update a board game. //
 

@@ -64,7 +64,27 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
     }
 })
 
-// GET boardgame by title //
+// GET random boardgame //
+
+boardGamesRouter.get("/random", async (req: Request, res: Response) => {
+    try {
+        const totalGames = await BoardGameService.findTotalGames(); // get total amount of games currently in database.
+        const randomNumber = Math.ceil(Math.random() * totalGames); // generate random number between 1 and totalGames
+        const randomGame = await BoardGameService.findRandomGame(randomNumber) // get random game by using randomNumber as OFFSET
+
+        if (randomGame) {
+            res.status(200).json(randomGame);
+        } else {
+            res.status(400).send("Could not get random game.");
+        }
+
+    } catch (error) {
+        console.error("Error fetching random game: ", error);
+        res.status(500).send(error);
+    }
+});
+
+// GET boardgame by title 
 
 boardGamesRouter.get("/:gameName", async (req: Request, res: Response) => {
     const gameName: string | undefined = req.params.gameName?.toString()
@@ -79,11 +99,4 @@ boardGamesRouter.get("/:gameName", async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).send(error)
     }
-})
-
-
-// POST items
-
-// PUT items/:id
-
-// DELETE items/:id
+});
