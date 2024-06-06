@@ -2,41 +2,6 @@
 import { BaseBoardGame, BoardGame, Boardgames } from "./boardgame.interface";
 import { db } from "../lib/db"
 
-// In-Memory Store
-
-// This will be deleted eventually when endpoints for adding/updating/deleting are added
-
-// let boardgames: Boardgames = [
-//     {
-//         id: 0,
-//         name: "Catan",
-//         description: "Catan is a cool game.",
-//         minPlayers: 3,
-//         maxPlayers: 5
-//     },
-//     {
-//         id: 1,
-//         name: "Wyrmspan",
-//         description: "Here there be dragons!",
-//         minPlayers: 1,
-//         maxPlayers: 5
-//     },
-//     {
-//         id: 2,
-//         name: "Everdell",
-//         description: "Animals init.",
-//         minPlayers: 1,
-//         maxPlayers: 4
-//     },
-//     {
-//         id: 3,
-//         name: "Sky Team",
-//         description: "Get off my plane!.",
-//         minPlayers: 2,
-//         maxPlayers: 2
-//     },
-// ]
-
 //  Service Methods
 
 // Fetch all BoardGames  //

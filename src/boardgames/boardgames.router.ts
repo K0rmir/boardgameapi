@@ -3,10 +3,13 @@ import express, { Request, Response } from "express";
 import * as BoardGameService from "./boardgames.service"
 import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
+import { validateApiKey } from "../middleware/apiKeys"
 
 
 //  Router Definition
 export const boardGamesRouter = express.Router();
+
+boardGamesRouter.use(validateApiKey)
 
 //  Controller Definitions
 
