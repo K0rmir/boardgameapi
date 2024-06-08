@@ -4,12 +4,13 @@ import * as BoardGameService from "./boardgames.service"
 import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
 import { validateApiKey } from "../middleware/apiKeys"
+import { limiter } from "../middleware/ratelimiter"
 
 
 //  Router Definition
 export const boardGamesRouter = express.Router();
 
-boardGamesRouter.use(validateApiKey)
+boardGamesRouter.use(limiter, validateApiKey)
 
 //  Controller Definitions
 
