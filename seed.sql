@@ -12,3 +12,13 @@ CREATE TABLE IF NOT EXISTS boardgames (
     game_mechanic TEXT[],
     game_designer TEXT[]
 )
+
+CREATE TABLE IF NOT EXISTS api_usage (
+    id SERIAL PRIMARY KEY,
+    api_key TEXT,
+    endpoint TEXT,
+    method VARCHAR(10),
+    status_code INT,
+    response_time_ms INT,
+    timestame TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

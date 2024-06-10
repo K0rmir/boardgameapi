@@ -85,11 +85,18 @@ export const getTotalCount = async (filters: {
 };
 
 // Return single boardgame with game name as parameter //
-export const findGameByTitle = async (gameName: string | undefined): Promise<BoardGame[]> => {
+export const findGameByTitle = async (gameName: string | undefined): Promise<BoardGame[] | string> => {
+
+    let results;
 
     try {
         const res = await db.query('SELECT * FROM boardgames WHERE game_name = $1', [gameName]);
-        return res.rows
+        if (res.rows.length === 0) {
+            results = 'null'
+        } else {
+            results = res.rows
+        }
+        return results
     } catch (error) {
         console.error("Database query error: ", error)
         throw error;

@@ -1,10 +1,11 @@
 // Required External Modules and Interfaces
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import * as BoardGameService from "./boardgames.service"
 import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
 import { validateApiKey } from "../middleware/apiKeys"
 import { limiter } from "../middleware/ratelimiter"
+import { logger } from "../middleware/logger"
 
 
 //  Router Definition
@@ -31,7 +32,7 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
 };
 
 // GET all boardgames or filter by maxplayers //
-boardGamesRouter.get("/", async (req: Request, res: Response) => {
+boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const filters = { // define search params/filters by pulling them from the search query
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
@@ -63,6 +64,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
             resultsReturned: boardgames.length,
             results: boardgames
         });
+        logger(req, res)
     } catch (e) {
         res.status(500).send(error)
     }
@@ -70,7 +72,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response) => {
 
 // GET random boardgame //
 
-boardGamesRouter.get("/random", async (req: Request, res: Response) => {
+boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFunction) => {
     try {
         const totalGames = await BoardGameService.findTotalGames(); // get total amount of games currently in database.
         const randomNumber = Math.ceil(Math.random() * totalGames); // generate random number between 1 and totalGames
@@ -78,8 +80,10 @@ boardGamesRouter.get("/random", async (req: Request, res: Response) => {
 
         if (randomGame) {
             res.status(200).json(randomGame);
+            logger(req, res)
         } else {
             res.status(400).send("Could not get random game.");
+            logger(req, res)
         }
 
     } catch (error) {
@@ -90,17 +94,24 @@ boardGamesRouter.get("/random", async (req: Request, res: Response) => {
 
 // GET boardgame by title 
 
-boardGamesRouter.get("/:gameName", async (req: Request, res: Response) => {
+boardGamesRouter.get("/:gameName", async (req: Request, res: Response, next: NextFunction) => {
     const gameName: string | undefined = req.params.gameName?.toString()
 
     try {
-        const boardgame: BoardGame[] = await BoardGameService.findGameByTitle(gameName)
+        const boardgame: BoardGame[] | string = await BoardGameService.findGameByTitle(gameName)
 
-        if (boardgame) {
+        if (boardgame === 'null') {
+            res.status(400).send("Game not found.")
+            logger(req, res)
+        } else {
+            logger(req, res)
             return res.status(200).send(boardgame)
+
         }
-        res.status(400).send("Game not found.")
+
+
     } catch (error) {
         res.status(500).send(error)
     }
 });
+

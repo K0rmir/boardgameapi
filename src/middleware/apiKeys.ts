@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { db } from "../lib/db"
+import { logger } from "../middleware/logger"
 
 
 // function to generate a random 36 character string for the api key // 
@@ -18,11 +19,13 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
 
     if (!apiKey) {
         res.status(401).json({ error: 'Unauthorized. Api Key is missing or incorrect.' })
+        logger(req, res)
     } else if (apiKey) {
         try {
             const findKey = await db.query('SELECT * from users WHERE key = $1', [apiKey])
             if (findKey.rows.length === 0) {
                 res.status(401).json({ error: 'Unauthorized. Api key is missing or incorrect.' })
+                logger(req, res)
                 console.error("Api Key does not exist in datadase.")
             } else {
                 console.log('Api Key Match!')
