@@ -22,7 +22,7 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
         logger(req, res)
     } else if (apiKey) {
         try {
-            const findKey = await db.query('SELECT * from users WHERE key = $1', [apiKey])
+            const findKey = await db.query('SELECT * from users WHERE api_key = $1', [apiKey])
             if (findKey.rows.length === 0) {
                 res.status(401).json({ error: 'Unauthorized. Api key is missing or incorrect.' })
                 logger(req, res)
