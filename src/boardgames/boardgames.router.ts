@@ -64,7 +64,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
             resultsReturned: boardgames.length,
             results: boardgames
         });
-        logger(req, res)
+        // logger(req, res)
     } catch (e) {
         res.status(500).send(error)
     }
@@ -80,10 +80,10 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 
         if (randomGame) {
             res.status(200).json(randomGame);
-            logger(req, res)
+            // logger(req, res)
         } else {
             res.status(400).send("Could not get random game.");
-            logger(req, res)
+            // logger(req, res)
         }
 
     } catch (error) {
@@ -102,9 +102,9 @@ boardGamesRouter.get("/:gameName", async (req: Request, res: Response, next: Nex
 
         if (boardgame === 'null') {
             res.status(400).send("Game not found.")
-            logger(req, res)
+            // logger(req, res)
         } else {
-            logger(req, res)
+            // logger(req, res)
             return res.status(200).send(boardgame)
 
         }
