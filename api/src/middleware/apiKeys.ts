@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { db } from "../lib/db"
-import { logger } from "../middleware/logger"
+import { logger } from "./logger"
 
 // function to generate a random 36 character string for the api key // 
 // This would be called upon a new user being generated when they sign up for a key 
