@@ -2,6 +2,10 @@
 
 #### This API stores the data of over 21,000 board games.
 
+In order to successfully retrieve data, an API key is required. This should be included in the header of every requests. 
+
+Requests are limited to 50 per each 15 minute window. 
+
 ## Endpoints 
 
  `/boardgames` - This is the primary endpoint and should always be used before other queries as you will see below. Queried as is, it will return every single board game. Results are paginated and limited to 100 rows per page. 
