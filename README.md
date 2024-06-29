@@ -1,8 +1,10 @@
-# Board Game API
+# boardapi
 
 #### This API stores the data of over 21,000 board games.
 
-In order to successfully retrieve data, an API key is required. This should be included in the header of every requests.
+In order to successfully use boardapi, an API key is required. This should be included in the header of every requests.
+
+You can register for a key, as well find the documentation and support at [boardapi.dev](https://boardapi.kormir.dev/). Please note this site is currently under development and is subject to change.
 
 Requests are limited to 50 per each 15 minute window.
 
