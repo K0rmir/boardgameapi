@@ -41,14 +41,17 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
         game_category: req.query.gamecategory ? req.query.gamecategory.toString().split(",") : undefined,
         game_mechanic: req.query.gamemechanic ? req.query.gamemechanic.toString().split(",") : undefined,
         game_designer: req.query.gamedesigner ? req.query.gamedesigner.toString().split(",") : undefined,
-        // page_size: req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : undefined,
     }
 
     console.log("Query Parameters:", req.query);
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
+    let limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
+
+    if (limit > 100) {
+        limit = 100;
+    }
 
     try {
         const boardgames = await BoardGameService.findBoardgames(filters, page, limit)
