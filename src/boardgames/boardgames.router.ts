@@ -31,7 +31,7 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
     return { nextPage, prevPage };
 };
 
-// GET all boardgames or filter by maxplayers //
+// GET all boardgames or games by filters //
 boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const filters = { // define search params/filters by pulling them from the search query
@@ -41,13 +41,14 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
         game_category: req.query.gamecategory ? req.query.gamecategory.toString().split(",") : undefined,
         game_mechanic: req.query.gamemechanic ? req.query.gamemechanic.toString().split(",") : undefined,
         game_designer: req.query.gamedesigner ? req.query.gamedesigner.toString().split(",") : undefined,
+        // page_size: req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : undefined,
     }
 
     console.log("Query Parameters:", req.query);
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const limit = 100; // limit how many boardgames are returned per page
+    const limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
 
     try {
         const boardgames = await BoardGameService.findBoardgames(filters, page, limit)

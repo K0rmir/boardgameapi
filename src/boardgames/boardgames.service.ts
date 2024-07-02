@@ -11,7 +11,8 @@ export const findBoardgames = async (filters: {
     year_published?: number,
     game_category?: string[],
     game_mechanic?: string[],
-    game_designer?: string[]
+    game_designer?: string[],
+    // page_size?: number,
 },
     page: number, limit: number): Promise<Boardgames> => {
 
