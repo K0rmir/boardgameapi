@@ -7,16 +7,22 @@ import { validateApiKey } from "../middleware/apiKeys"
 import { limiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
 
-
 //  Router Definition
 export const boardGamesRouter = express.Router();
 
 boardGamesRouter.use(limiter, validateApiKey)
 
+// Helper function to get apiKey for endpoint logging
+function getApiKey(req: Request) {
+    const apiKey: string | string[] | undefined = req.headers['x-api-key'];
+    return apiKey;
+}
+
 //  Controller Definitions
 
 // Helper function to build pagination links //
 const buildPaginationLinks = (req: Request, page: number, totalPages: number): { nextPage: string | null, prevPage: string | null } => {
+
     const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`
     const query = new URLSearchParams(req.query as any);
 
@@ -34,6 +40,8 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
 // GET all boardgames or games by filters //
 boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
+    const apiKey = getApiKey(req)
+
     const filters = { // define search params/filters by pulling them from the search query
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
         play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,
@@ -47,8 +55,8 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    let limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
 
+    let limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
     if (limit > 100) {
         limit = 100;
     }
@@ -68,15 +76,17 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
             resultsReturned: boardgames.length,
             results: boardgames
         });
-        // logger(req, res)
+        logger(req, res, `${apiKey}`)
     } catch (e) {
         res.status(500).send(error)
     }
 })
 
 // GET random boardgame //
-
 boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFunction) => {
+
+    const apiKey = getApiKey(req)
+
     try {
         const totalGames = await BoardGameService.findTotalGames(); // get total amount of games currently in database.
         const randomNumber = Math.ceil(Math.random() * totalGames); // generate random number between 1 and totalGames
@@ -84,10 +94,10 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 
         if (randomGame) {
             res.status(200).json(randomGame);
-            // logger(req, res)
+            logger(req, res, `${apiKey}`)
         } else {
             res.status(400).send("Could not get random game.");
-            // logger(req, res)
+            logger(req, res, `${apiKey}`)
         }
 
     } catch (error) {
@@ -97,20 +107,21 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 });
 
 // GET boardgame by title 
-
 boardGamesRouter.get("/:gameName", async (req: Request, res: Response, next: NextFunction) => {
+
     const gameName: string | undefined = req.params.gameName?.toString()
+    const apiKey = getApiKey(req)
 
     try {
         const boardgame: BoardGame[] | string = await BoardGameService.findGameByTitle(gameName)
 
         if (boardgame === 'null') {
             res.status(400).send("Game not found.")
-            // logger(req, res)
-        } else {
-            // logger(req, res)
-            return res.status(200).send(boardgame)
+            logger(req, res, `${apiKey}`)
 
+        } else {
+            res.status(200).send(boardgame)
+            logger(req, res, `${apiKey}`)
         }
 
 

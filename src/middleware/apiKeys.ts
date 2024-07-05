@@ -19,7 +19,6 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
                 res.status(401).json({ error: 'Unauthorized. Api key is incorrect.' })
                 logger(req, res, `INVALID_KEY - ${apiKey}`)
             } else {
-                logger(req, res, `${apiKey}`)
                 next() // if key matches, proceed to endpoint called.
             }
         } catch (error: any) {
