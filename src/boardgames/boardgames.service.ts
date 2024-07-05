@@ -57,8 +57,6 @@ export const getTotalCount = async (filters: {
 },
 ): Promise<number> => {
 
-    console.log("Game Category = ", filters.game_category)
-
     let query = 'SELECT COUNT(*) FROM boardgames WHERE 1=1'
     const queryParams: (number | string[])[] = [];
     let paramCount = 1;

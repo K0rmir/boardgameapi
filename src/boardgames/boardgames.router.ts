@@ -13,9 +13,8 @@ export const boardGamesRouter = express.Router();
 boardGamesRouter.use(limiter, validateApiKey)
 
 // Helper function to get apiKey for endpoint logging
-function getApiKey(req: Request) {
-    const apiKey: string | string[] | undefined = req.headers['x-api-key'];
-    return apiKey;
+function getApiKey(req: Request): string | undefined {
+    return req.headers['x-api-key'] as string | undefined;
 }
 
 //  Controller Definitions
@@ -42,6 +41,19 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 
     const apiKey = getApiKey(req)
 
+    // Create set of valid filters. Sets are more efficent for iterating over and checking.
+    // This set and loop may need to be moved into a helper function when params on the random endpoint are enabled.
+    const validFilters = new Set(['maxplayers', 'playtime', 'yearpublish', 'gamecategory', 'gamemechanic', 'gamedesigner'])
+
+    // Loop over req.query object where user query params are stored and check if they are in the validFilters set. 
+    for (const reqParam of Object.keys(req.query)) {
+        if (!validFilters.has(reqParam)) {
+            res.status(400).send(`Could not return results. There could be an issue with your query param, '${reqParam}'.`)
+            logger(req, res, apiKey);
+            return;
+        }
+    }
+
     const filters = { // define search params/filters by pulling them from the search query
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
         play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,
@@ -50,8 +62,6 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
         game_mechanic: req.query.gamemechanic ? req.query.gamemechanic.toString().split(",") : undefined,
         game_designer: req.query.gamedesigner ? req.query.gamedesigner.toString().split(",") : undefined,
     }
-
-    console.log("Query Parameters:", req.query);
 
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
@@ -76,9 +86,11 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
             resultsReturned: boardgames.length,
             results: boardgames
         });
-        logger(req, res, `${apiKey}`)
+        logger(req, res, apiKey)
+        return;
     } catch (e) {
-        res.status(500).send(error)
+        res.status(500).send(e)
+        return;
     }
 })
 
@@ -94,10 +106,12 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 
         if (randomGame) {
             res.status(200).json(randomGame);
-            logger(req, res, `${apiKey}`)
+            logger(req, res, apiKey)
+            return;
         } else {
             res.status(400).send("Could not get random game.");
-            logger(req, res, `${apiKey}`)
+            logger(req, res, apiKey)
+            return;
         }
 
     } catch (error) {
@@ -117,13 +131,13 @@ boardGamesRouter.get("/:gameName", async (req: Request, res: Response, next: Nex
 
         if (boardgame === 'null') {
             res.status(400).send("Game not found.")
-            logger(req, res, `${apiKey}`)
-
+            logger(req, res, apiKey)
+            return;
         } else {
             res.status(200).send(boardgame)
-            logger(req, res, `${apiKey}`)
+            logger(req, res, apiKey)
+            return;
         }
-
 
     } catch (error) {
         res.status(500).send(error)
