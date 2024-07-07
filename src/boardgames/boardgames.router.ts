@@ -5,7 +5,7 @@ import * as BoardGameService from "./boardgames.service"
 import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
 import { validateApiKey } from "../middleware/apiKeys"
-import { limiter } from "../middleware/ratelimiter"
+import { rateLimiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
 import { METHODS } from "http";
 
@@ -19,7 +19,7 @@ const corsOptions = {
 //  Router Definition
 export const boardGamesRouter = express.Router();
 
-boardGamesRouter.use(cors(corsOptions), limiter, validateApiKey)
+boardGamesRouter.use(cors(corsOptions), rateLimiter, validateApiKey)
 
 // Helper function to get apiKey for endpoint logging
 function getApiKey(req: Request): string | undefined {
