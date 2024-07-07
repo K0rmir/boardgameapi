@@ -1,23 +1,30 @@
 // Required External Modules and Interfaces
 import express, { NextFunction, Request, Response } from "express";
+import cors from "cors";
 import * as BoardGameService from "./boardgames.service"
 import { BoardGame } from "./boardgame.interface";
 import { error } from "console";
 import { validateApiKey } from "../middleware/apiKeys"
 import { limiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
+import { METHODS } from "http";
+
+// Cors configuration
+const corsOptions = {
+    origin: '*',
+    METHODS: ['GET'],
+    optionsSuccessStatus: 204
+}
 
 //  Router Definition
 export const boardGamesRouter = express.Router();
 
-boardGamesRouter.use(limiter, validateApiKey)
+boardGamesRouter.use(cors(corsOptions), limiter, validateApiKey)
 
 // Helper function to get apiKey for endpoint logging
 function getApiKey(req: Request): string | undefined {
     return req.headers['x-api-key'] as string | undefined;
 }
-
-//  Controller Definitions
 
 // Helper function to build pagination links //
 const buildPaginationLinks = (req: Request, page: number, totalPages: number): { nextPage: string | null, prevPage: string | null } => {
@@ -35,6 +42,8 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
 
     return { nextPage, prevPage };
 };
+
+//  Controller Definitions
 
 // GET all boardgames or games by filters //
 boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
