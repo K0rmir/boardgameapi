@@ -12,9 +12,11 @@
         "dest": "/src/index.ts"
       }
     ], 
-    "crons": [{
+    "crons": [
+      {
       "path": "/lib/cron",
       "schedule": "*/1 * * * *"
-    }]
+      }
+    ]
   }
   
