@@ -74,7 +74,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
     // Variables for pagination passed to the service methods for use in SQL queries.
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
 
-    let limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 100; // limit how many boardgames are returned per page
+    let limit = req.query.pagesize ? parseInt(req.query.pagesize as string, 10) : 50; // limit how many boardgames are returned per page
     if (limit > 100) {
         limit = 100;
     }
