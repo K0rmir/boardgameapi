@@ -10,6 +10,7 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
 
     if (!apiKey) {
         res.status(401).json({ error: 'Unathorized. Api Key is missing.' })
+        console.log('Unathorized. Api Key is missing.')
         logger(req, res, 'MISSING_KEY');
         return;
     } else if (apiKey) {

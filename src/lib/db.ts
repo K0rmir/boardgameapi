@@ -17,4 +17,4 @@ db.on('error', (err) => { // add event listener 'on' to handle any unexpected er
     process.exit(-1);
 });
 
-console.log("Database pool created with connection string");
+// console.log("Database pool created with connection string");

@@ -7,7 +7,6 @@ import { error } from "console";
 import { validateApiKey } from "../middleware/apiKeys"
 import { rateLimiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
-import { METHODS } from "http";
 
 // Cors configuration
 const corsOptions = {
