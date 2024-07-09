@@ -9,7 +9,8 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
 
     if (!apiKey) {
         res.status(401).json({ error: 'Unauthorized. Api Key is missing.' })
-        logger(req, res, 'MISSING_KEY')
+        logger(req, res, 'MISSING_KEY');
+        return;
 
     } else if (apiKey) {
         try {
@@ -18,6 +19,7 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
             if (!keyExists) {
                 res.status(401).json({ error: 'Unauthorized. Api key is incorrect.' })
                 logger(req, res, `INVALID_KEY - ${apiKey}`)
+                return;
             } else {
                 next() // if key matches, proceed to endpoint called.
             }
