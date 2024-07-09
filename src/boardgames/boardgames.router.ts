@@ -51,7 +51,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 
     // Define Set of valid filters. Sets are more efficent for iterating over and checking.
     // This set and loop may need to be moved into a helper function when params on the random endpoint are enabled.
-    const validFilters = new Set(['maxplayers', 'playtime', 'yearpublished', 'gamecategory', 'gamemechanic', 'gamedesigner'])
+    const validFilters = new Set(['maxplayers', 'playtime', 'yearpublished', 'gamecategory', 'gamemechanic', 'gamedesigner', 'pagesize', 'page'])
 
     // Loop over req.query object where user query params are stored and check if they are in the validFilters set. 
     for (const reqParam of Object.keys(req.query)) {
