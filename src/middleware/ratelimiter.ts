@@ -12,13 +12,13 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
         res.status(401).json({ error: 'Unathorized. Api Key is missing.' })
         console.log('Unathorized. Api Key is missing.')
         logger(req, res, 'MISSING_KEY');
-        return;
+        // return;
     } else if (apiKey) {
         try {
 
             // Define time window for total requests
             const currentTime = new Date();
-            const windowSize = new Date(currentTime.getTime() - 60 * 60 * 1000); // 15 minutes
+            const windowSize = new Date(currentTime.getTime() - 60 * 60 * 1000); // 1 hour
 
             // Define number of times key has been used within windowSize
             const data = await db.query('SELECT COUNT(*) FROM api_usage_logs WHERE api_key = $1 AND timestamp >= $2', [apiKey, windowSize.toISOString()]);
