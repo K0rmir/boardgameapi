@@ -12,7 +12,7 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
         res.status(401).json({ error: 'Unathorized. Api Key is missing.' })
         console.log('Unathorized. Api Key is missing.')
         logger(req, res, 'MISSING_KEY');
-        // return;
+        return;
     } else if (apiKey) {
         try {
 
@@ -26,6 +26,7 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
 
             if (keyCount >= requestLimit) {
                 res.status(429).json({ error: 'Rate Limit Exceeded. Try again in one hour.' });
+                console.log('Rate Limit Exceeded. Try again in one hour.')
                 logger(req, res, apiKey);
                 return
             } else {

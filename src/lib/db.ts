@@ -16,5 +16,3 @@ db.on('error', (err) => { // add event listener 'on' to handle any unexpected er
     console.error('Unexpected error on idle client', err);
     process.exit(-1);
 });
-
-// console.log("Database pool created with connection string");
