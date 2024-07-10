@@ -6,6 +6,7 @@ import { db } from "../lib/db"
 
 // Fetch all BoardGames  //
 export const findBoardgames = async (filters: {
+    game_description?: boolean,
     max_players?: number,
     play_time?: number,
     year_published?: number,
@@ -17,7 +18,14 @@ export const findBoardgames = async (filters: {
 
     const offset = (page - 1) * limit;
 
-    let query = 'SELECT * FROM boardgames WHERE 1=1' // define base query. WHERE 1=1 is a common SQL technique and allows every condition to be appended with AND without worrying if it's the first condition.
+    // define base query. WHERE 1=1 is a common SQL technique and allows every condition to be appended with AND without worrying if it's the first condition.
+    let query;
+    if (filters.game_description == true) {
+        query = 'SELECT id, game_name, game_description, year_published, min_players, max_players, play_time, min_playtime, max_playtime, game_category, game_mechanic, game_designer FROM boardgames WHERE 1=1'
+    } else {
+        query = 'SELECT id, game_name, year_published, min_players, max_players, play_time, min_playtime, max_playtime, game_category, game_mechanic, game_designer FROM boardgames WHERE 1=1 '
+    }
+
     const queryParams: (number | string | any)[] = [];
     let paramCount = 1;
 
