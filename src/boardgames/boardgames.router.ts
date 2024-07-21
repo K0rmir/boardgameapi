@@ -45,7 +45,7 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
 //  Controller Definitions
 
 // GET all boardgames or games by filters //
-boardGamesRouter.get("/boardgames", async (req: Request, res: Response, next: NextFunction) => {
+boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const apiKey = getApiKey(req)
 
@@ -130,9 +130,9 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 });
 
 // GET boardgame by title 
-boardGamesRouter.get("/:gameName", async (req: Request, res: Response, next: NextFunction) => {
+boardGamesRouter.get("/gamename", async (req: Request, res: Response, next: NextFunction) => {
 
-    const gameName: string | undefined = req.params.gameName?.toString()
+    const gameName: string | undefined = Object.keys(req.query)[0];
     const apiKey = getApiKey(req)
 
     try {
