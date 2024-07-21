@@ -15,8 +15,8 @@ if (!process.env.PORT) {
     process.exit(1);
 }
 
-const PORT: number = parseInt(process.env.PORT as string, 10);
-// const PORT: string = process.env.PORT;
+// const PORT: number = parseInt(process.env.PORT as string, 10);
+const PORT: string = process.env.PORT;
 
 const app = express()
 
@@ -25,8 +25,8 @@ const app = express()
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use("/src/boardgames", boardGamesRouter)
-// app.use("/boardgames", boardGamesRouter)
+// app.use("/src/boardgames", boardGamesRouter)
+app.use("/boardgames", boardGamesRouter)
 
 // Server Activation
 
@@ -52,6 +52,6 @@ const startServer = async () => {
     }
 };
 
-startServer();
+// startServer();
 
 export default app;

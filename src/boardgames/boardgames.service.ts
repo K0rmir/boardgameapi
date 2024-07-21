@@ -20,7 +20,7 @@ export const findBoardgames = async (filters: {
 
     // define base query. WHERE 1=1 is a common SQL technique and allows every condition to be appended with AND without worrying if it's the first condition.
     let query;
-    if (filters.game_description == true) {
+    if (filters.game_description === true) {
         query = 'SELECT id, game_name, game_description, year_published, min_players, max_players, play_time, min_playtime, max_playtime, game_category, game_mechanic, game_designer FROM boardgames WHERE 1=1'
     } else {
         query = 'SELECT id, game_name, year_published, min_players, max_players, play_time, min_playtime, max_playtime, game_category, game_mechanic, game_designer FROM boardgames WHERE 1=1 '
