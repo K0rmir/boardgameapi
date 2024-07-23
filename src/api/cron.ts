@@ -1,7 +1,7 @@
 import { db } from "../lib/db"
 
 export default async function aggregateLogs(req, res) {
-    console.log("--CronJob Start--");
+    console.log("--Cron job started--");
 
     const date = new Date();
     const today = date.toLocaleDateString('en-CA');
