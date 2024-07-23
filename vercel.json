@@ -14,7 +14,7 @@
     ],
     "crons": [
       {
-      "path": "/lib/cron",
+      "path": "/api/cron",
       "schedule": "0 0 * * *"
       }
     ]
