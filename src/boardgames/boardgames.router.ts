@@ -2,8 +2,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import * as BoardGameService from "./boardgames.service"
-import { BoardGame } from "./boardgame.interface";
-import { error } from "console";
+import { BoardGame, filters } from "./boardgame.interface";
 import { validateApiKey } from "../middleware/apiKeys"
 import { rateLimiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
@@ -54,15 +53,23 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
     const validFilters = new Set(['gamedescription', 'maxplayers', 'playtime', 'yearpublished', 'gamecategory', 'gamemechanic', 'gamedesigner', 'pagesize', 'page'])
 
     // Loop over req.query object where user query params are stored and check if they are in the validFilters set. 
-    for (const reqParam of Object.keys(req.query)) {
+    for (const [reqParam, value] of Object.entries(req.query)) {
         if (!validFilters.has(reqParam)) {
             res.status(400).send(`Could not return results. There could be an issue with your query param, '${reqParam}'.`)
             logger(req, res, apiKey);
             return;
         }
+        // Check to ensure relevant integer query params don't have words as values //
+        if (reqParam === 'maxplayers' || reqParam === 'playtime' || reqParam === 'yearpublished') {
+            if (typeof value === 'string' && !/\d/.test(value)) {
+                res.status(400).send(`Could not return results. There could be an issue with the value of one or more of your query params.`);
+                logger(req, res, apiKey);
+                return;
+            }
+        }
     }
 
-    const filters = { // define search params/filters by pulling them from the search query
+    const filters: filters = { // define search params/filters by pulling them from the search query
         game_description: req.query.gamedescription === 'false' ? false : req.query.gamedescription ? true : undefined,
         max_players: req.query.maxplayers ? parseInt(req.query.maxplayers as string, 10) : undefined,
         play_time: req.query.playtime ? parseInt(req.query.playtime as string, 10) : undefined,

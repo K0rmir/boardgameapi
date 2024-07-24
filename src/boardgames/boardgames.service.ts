@@ -1,20 +1,11 @@
 // Data Model Interfaces
-import { BaseBoardGame, BoardGame, Boardgames } from "./boardgame.interface";
+import { filters, BoardGame, Boardgames } from "./boardgame.interface";
 import { db } from "../lib/db"
 
 //  Service Methods
 
 // Fetch all BoardGames  //
-export const findBoardgames = async (filters: {
-    game_description?: boolean,
-    max_players?: number,
-    play_time?: number,
-    year_published?: number,
-    game_category?: string[],
-    game_mechanic?: string[],
-    game_designer?: string[],
-},
-    page: number, limit: number): Promise<Boardgames> => {
+export const findBoardgames = async (filters: filters, page: number, limit: number): Promise<Boardgames> => {
 
     const offset = (page - 1) * limit;
 
