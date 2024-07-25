@@ -24,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/boardgames", boardGamesRouter); // (*)
 
-// Cron //
+// Cron route/endpoint //
 app.get('/utils/cron', async (req, res) => {
     try {
         await aggregateLogs();
