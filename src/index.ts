@@ -5,7 +5,6 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { boardGamesRouter } from "./boardgames/boardgames.router"
-import { db } from "./lib/db"
 import aggregateLogs from "./utils/cron"
 
 dotenv.config();
@@ -16,21 +15,16 @@ if (!process.env.PORT) {
     process.exit(1);
 }
 
-// const PORT: number = parseInt(process.env.PORT as string, 10);
-const PORT: string = process.env.PORT;
-
+const PORT: string = process.env.PORT; // (*)
 const app = express()
 
 // App Configuration
-
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-// app.use("/src/boardgames", boardGamesRouter);
-app.use("/boardgames", boardGamesRouter);
+app.use("/boardgames", boardGamesRouter); // (*)
 
 // Cron //
-
 app.get('/utils/cron', async (req, res) => {
     try {
         await aggregateLogs();
@@ -41,7 +35,10 @@ app.get('/utils/cron', async (req, res) => {
     }
 });
 
-// Server Activation for local host testing //
+// v For local host usage/testing comment out lines marked (*) and enable the below. Revert before pushing. v //
+
+// app.use("/src/boardgames", boardGamesRouter);
+// const PORT: number = parseInt(process.env.PORT as string, 10);
 
 // const startServer = async () => {
 //     try {
