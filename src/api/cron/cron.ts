@@ -1,4 +1,4 @@
-import { db } from "../lib/db"
+import { db } from "../../lib/db"
 
 export default async function aggregateLogs(req, res) {
     console.log("--Cron job started--");
