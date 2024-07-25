@@ -6,6 +6,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { boardGamesRouter } from "./boardgames/boardgames.router"
 import { db } from "./lib/db"
+import aggregateLogs from "./utils/cron"
 
 dotenv.config();
 
@@ -28,29 +29,41 @@ app.use(express.json());
 // app.use("/src/boardgames", boardGamesRouter);
 app.use("/boardgames", boardGamesRouter);
 
-// Server Activation
+// Cron //
 
-const startServer = async () => {
+app.get('/utils/cron', async (req, res) => {
     try {
-        // Check database connection
-        await db.query('SELECT 1', (err, res) => {
-            if (err) {
-                console.error('Error executing query:', err.stack);
-                process.exit(1); // Exit the process if the connection fails
-            } else {
-                console.log('Database connection verified. Query result:', res.rows);
-            }
-        });
-
-        // Start the server
-        app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
-        });
-    } catch (err) {
-        console.error('Failed to connect to the database', err);
-        process.exit(1);
+        await aggregateLogs();
+        res.status(200).send('Cron Job Completed');
+    } catch (error) {
+        console.error('Cron Job Failed:', error);
+        res.status(500).send('Cron job failed');
     }
-};
+});
+
+// Server Activation for local host testing //
+
+// const startServer = async () => {
+//     try {
+//         // Check database connection
+//         await db.query('SELECT 1', (err, res) => {
+//             if (err) {
+//                 console.error('Error executing query:', err.stack);
+//                 process.exit(1); // Exit the process if the connection fails
+//             } else {
+//                 console.log('Database connection verified. Query result:', res.rows);
+//             }
+//         });
+
+//         // Start the server
+//         app.listen(PORT, () => {
+//             console.log(`Server is running on http://localhost:${PORT}`);
+//         });
+//     } catch (err) {
+//         console.error('Failed to connect to the database', err);
+//         process.exit(1);
+//     }
+// };
 
 // startServer();
 

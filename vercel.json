@@ -8,13 +8,17 @@
     ],
     "routes": [
       {
+        "src": "/utils/cron",
+        "dest": "/src/index.ts"
+      },
+      {
         "src": "/(.*)",
         "dest": "/src/index.ts"
       }
     ],
     "crons": [
       {
-      "path": "/api/cron",
+      "path": "/utils/cron",
       "schedule": "0 0 * * *"
       }
     ]

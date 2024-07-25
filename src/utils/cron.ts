@@ -1,6 +1,6 @@
-import { db } from "../../lib/db"
+import { db } from "../lib/db"
 
-export default async function aggregateLogs(req, res) {
+export default async function aggregateLogs() {
     console.log("--Cron job started--");
 
     const date = new Date();
@@ -17,5 +17,5 @@ export default async function aggregateLogs(req, res) {
         console.log(` No logs found on ${today}. Inserted zeros.`);
     }
 
-    res.status(200).json({ message: "Cron job completed" });
+    // res.status(200).json({ message: "Cron job completed" });
 }
