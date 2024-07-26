@@ -1,11 +1,12 @@
 // Required External Modules
 
 import * as dotenv from "dotenv";
-import express from "express";
+import express from 'express';
 import cors from "cors";
 import helmet from "helmet";
-import { boardGamesRouter } from "./boardgames/boardgames.router"
-import aggregateLogs from "./utils/cron"
+import { boardGamesRouter } from "./boardgames/boardgames.router";
+import aggregateLogs from "./utils/cron";
+import { createClient } from '@supabase/supabase-js';
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.use("/boardgames", boardGamesRouter); // (*)
 // Cron route/endpoint //
 app.get('/utils/cron', async (req, res) => {
     try {
-        await aggregateLogs();
+        await aggregateLogs(req, res);
         res.status(200).send('Cron Job Completed');
     } catch (error) {
         console.error('Cron Job Failed:', error);
