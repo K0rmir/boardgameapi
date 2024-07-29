@@ -6,7 +6,6 @@ import cors from "cors";
 import helmet from "helmet";
 import { boardGamesRouter } from "./boardgames/boardgames.router";
 import aggregateLogs from "./utils/cron";
-import { createClient } from '@supabase/supabase-js';
 
 dotenv.config();
 
