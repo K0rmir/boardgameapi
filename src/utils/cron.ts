@@ -4,9 +4,14 @@ import express, { Request, Response } from 'express';
 export default async function aggregateLogs(req: Request, res: Response) {
     console.log("--Cron job started--");
 
-    // Using yesterday instead of 'today' as vercel cron job is scheduled to run between 12am-1am due to free plan //
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1).toLocaleString('en-CA');
+    // const date = new Date();
+    // const today = date.toLocaleDateString('en-CA');
+
+    // Using yesterday instead of 'today' as vercel cron job is scheduled to run between 12am-1am due to free plan
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+
+    const yesterday = date.toLocaleDateString('en-CA');
 
     // Check if there are any logs today, if so aggregate, if not, insert zero's //
 
