@@ -1,6 +1,7 @@
 // Required External Modules
 
 import * as dotenv from "dotenv";
+import { db } from "./lib/db"
 import express from 'express';
 import cors from "cors";
 import helmet from "helmet";
