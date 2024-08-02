@@ -2,7 +2,7 @@
 
 #### This API stores the data of over 21,000 board games.
 
-In order to successfully use boardapi, an API key is required. This should be included in the header of every requests.
+In order to successfully use boardapi, an API key is required. This should be included in the header of every request.
 
 You can register for a key, as well find the documentation and support at [boardapi.dev](https://boardapi.kormir.dev/). Please note this site is currently under development and is subject to change.
 
@@ -10,7 +10,7 @@ Requests are limited to 50 per each 15 minute window.
 
 ## Endpoints
 
-`/boardgames` - This is the primary endpoint and should always be used before other queries as you will see below. Queried as is, it will return every single board game. Results are paginated and limited to 100 rows per page.
+`/boardgames` - This is the primary endpoint and should always be used before other queries as you will see below. Queried as is, it will return every single board game. Results are paginated and limited to 50 rows per page.
 
 `/gamename` - This endpoint will return a single board game matching the name entered. Eg. `/boardgames/Catan` will return 1 result for Catan.
 
