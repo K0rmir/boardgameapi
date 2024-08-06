@@ -2,14 +2,14 @@ import express, { NextFunction, Request, Response } from "express";
 import { db } from "../lib/db"
 // import { CronJob } from 'cron';
 
-export async function logger(req: Request, res: Response, apiKey?: string) {
+export async function logger(req: Request, res: Response, responseTime: number, apiKey?: string) {
 
-    const start = Date.now()
+    const responseTimeMs = () => {
+        return parseFloat(responseTime.toFixed(2));
+    }
 
     try {
-        const duration = Date.now() - start
-        await db.query('INSERT INTO api_usage_logs (api_key, endpoint, method, status_code, response_time_ms, query_params) VALUES ($1, $2, $3, $4, $5, $6)', [apiKey || null, req.path, req.method, res.statusCode, duration, Object.keys(req.query)]);
-
+        await db.query('INSERT INTO api_usage_logs (api_key, endpoint, method, status_code, response_time_ms, query_params) VALUES ($1, $2, $3, $4, $5, $6)', [apiKey || null, req.path, req.method, res.statusCode, responseTimeMs(), Object.keys(req.query)]);
         console.log("Database log inserted successfully");
     } catch (error) {
         console.error(error);

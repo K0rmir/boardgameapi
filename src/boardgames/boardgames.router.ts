@@ -41,11 +41,21 @@ const buildPaginationLinks = (req: Request, page: number, totalPages: number): {
     return { nextPage, prevPage };
 };
 
+// Helper function to calculate response time //
+function responseTimeStamp(errorStatus: boolean, startTime?: number): number {
+    if (errorStatus && startTime !== undefined) {
+        const endTime = Number(process.hrtime.bigint());
+        return endTime - startTime;
+    } else {
+        return Number(process.hrtime.bigint());
+    }
+};
+
 //  Controller Definitions
 
 // GET all boardgames or games by filters //
 boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
-
+    const startTime = responseTimeStamp(false);
     const apiKey = getApiKey(req)
 
     // Define Set of valid filters. Sets are more efficent for iterating over and checking.
@@ -56,14 +66,14 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
     for (const [reqParam, value] of Object.entries(req.query)) {
         if (!validFilters.has(reqParam)) {
             res.status(400).send(`Could not return results. There could be an issue with your query param, '${reqParam}'.`)
-            logger(req, res, apiKey);
+            logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey);
             return;
         }
         // Check to ensure relevant integer query params don't have words as values //
         if (reqParam === 'maxplayers' || reqParam === 'playtime' || reqParam === 'yearpublished') {
             if (typeof value === 'string' && !/\d/.test(value)) {
                 res.status(400).send(`Could not return results. There could be an issue with the value of one or more of your query params.`);
-                logger(req, res, apiKey);
+                logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey);
                 return;
             }
         }
@@ -102,17 +112,19 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
             resultsReturned: boardgames.length,
             results: boardgames
         });
-        logger(req, res, apiKey)
+        const endTime = responseTimeStamp(false);
+        const responseTime = Number(endTime - startTime) / 1000000;
+        logger(req, res, responseTime, apiKey)
         return;
     } catch (e) {
         res.status(500).send(e)
         return;
     }
-})
+});
 
 // GET random boardgame //
 boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFunction) => {
-
+    const startTime = responseTimeStamp(false);
     const apiKey = getApiKey(req)
 
     try {
@@ -122,14 +134,15 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 
         if (randomGame) {
             res.status(200).json(randomGame);
-            logger(req, res, apiKey)
+            const endTime = responseTimeStamp(false);
+            const responseTime = Number(endTime - startTime) / 1000000;
+            logger(req, res, responseTime, apiKey);
             return;
         } else {
             res.status(400).send("Could not get random game.");
-            logger(req, res, apiKey)
+            logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey)
             return;
         }
-
     } catch (error) {
         console.error("Error fetching random game: ", error);
         res.status(500).send(error);
@@ -138,6 +151,7 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 
 // GET boardgame by title 
 boardGamesRouter.get("/gamename", async (req: Request, res: Response, next: NextFunction) => {
+    const startTime = responseTimeStamp(false);
 
     const gameName: string | undefined = Object.keys(req.query)[0];
     const apiKey = getApiKey(req)
@@ -147,11 +161,13 @@ boardGamesRouter.get("/gamename", async (req: Request, res: Response, next: Next
 
         if (boardgame === 'null') {
             res.status(400).send("Game not found.")
-            logger(req, res, apiKey)
+            logger(req, res, Number(responseTimeStamp(true, startTime)), apiKey)
             return;
         } else {
             res.status(200).send(boardgame)
-            logger(req, res, apiKey)
+            const endTime = responseTimeStamp(false);
+            const responseTime = Number(endTime - startTime) / 1000000;
+            logger(req, res, responseTime, apiKey)
             return;
         }
 
