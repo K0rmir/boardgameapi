@@ -15,6 +15,8 @@ export default async function aggregateLogs(req: Request, res: Response) {
     try {
         const checkLogsToday = await db.query(`SELECT timestamp FROM api_usage_logs WHERE DATE(timestamp) = $1`, [yesterday]);
 
+        console.log("Logs today =", checkLogsToday);
+
         if (checkLogsToday.rows && checkLogsToday.rows.length > 0) {
             await db.query(`INSERT INTO api_usage_aggregate (api_key, endpoint, date, request_count, total_response_time_ms, error_count, query_params) SELECT api_key, endpoint, DATE_TRUNC('day', timestamp) AS date, COUNT(*) AS request_count, SUM(response_time_ms) AS total_response_time_ms, COUNT(*) FILTER(WHERE status_code >= 400) AS error_count, query_params FROM api_usage_logs WHERE timestamp >= NOW() - INTERVAL '1 day' GROUP BY api_key, endpoint, DATE_TRUNC('day', timestamp), query_params`);
             console.log(`Logs found on ${yesterday} & aggregated.`);
