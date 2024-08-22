@@ -12,7 +12,6 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
 
   if (!apiKey) {
     res.status(401).json({ error: 'Unauthorized. Api Key is missing.' });
-    console.log('Hello from the Valididate API Key Function!');
     console.log('Unauthorized. Api Key is missing.');
     logger(req, res, null, 'MISSING_KEY');
     return;
