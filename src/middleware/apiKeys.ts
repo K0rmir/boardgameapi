@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 export async function validateApiKey(req: Request, res: Response, next: NextFunction) { // exported to be used in router.ts
 
   const apiKey = req.headers['x-api-key'] as string; // define apiKey from headers of the request
+  let hashedApiKey: string = '';
 
   if (!apiKey) {
     res.status(401).json({ error: 'Unauthorized. Api Key is missing.' })
@@ -17,6 +18,7 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
 
   } else if (apiKey) {
 
+
     try {
       const hashedKeys = await db.query('SELECT api_key FROM users');
       let isAuthenticated: boolean = false;
@@ -24,13 +26,14 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
       for (const hashedKey of hashedKeys.rows) {
         if (await bcrypt.compare(apiKey, hashedKey.api_key)) {
           isAuthenticated = true;
+          hashedApiKey = hashedKey.api_key;
           break;
         }
       }
 
       if (!isAuthenticated) {
-        res.status(401).json({ error: 'Unauthorized. Api key is incorrect.' })
-        logger(req, res, 0, `INVALID_KEY - ${apiKey}`)
+        res.status(401).json({ error: 'Unauthorized. Api key is incorrect.' });
+        logger(req, res, 0, `INVALID_KEY - ${hashedApiKey}`);
       }
 
       next();

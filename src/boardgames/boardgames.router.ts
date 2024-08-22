@@ -6,6 +6,9 @@ import { BoardGame, filters } from "./boardgame.interface";
 import { validateApiKey } from "../middleware/apiKeys"
 import { rateLimiter } from "../middleware/ratelimiter"
 import { logger } from "../middleware/logger"
+import { db } from "../lib/db"
+import bcrypt from 'bcrypt';
+
 
 // Cors configuration
 const corsOptions = {
@@ -20,8 +23,19 @@ export const boardGamesRouter = express.Router();
 boardGamesRouter.use(cors(corsOptions), rateLimiter, validateApiKey)
 
 // Helper function to get apiKey for endpoint logging
-function getApiKey(req: Request): string | undefined {
-	return req.headers['x-api-key'] as string | undefined;
+async function getApiKey(req: Request): Promise<string | undefined> {
+
+	const apiKey: string | string[] | undefined = req.headers['x-api-key'];
+	const hashedKeys = await db.query('SELECT api_key FROM users');
+	let hashedApiKey: string | undefined = ''
+
+	for (const hashedKey of hashedKeys.rows) {
+		if (await bcrypt.compare(apiKey as string, hashedKey.api_key)) {
+			hashedApiKey = hashedKey.api_key;
+		}
+	}
+
+	return hashedApiKey;
 }
 
 // Helper function to build pagination links //
@@ -56,7 +70,7 @@ function responseTimeStamp(errorStatus: boolean, startTime?: number): number {
 // GET all boardgames or games by filters //
 boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
 	const startTime = responseTimeStamp(false);
-	const apiKey = getApiKey(req)
+	const hashedApiKey = getApiKey(req)
 
 	// Define Set of valid filters. Sets are more efficent for iterating over and checking.
 	// This set and loop may need to be moved into a helper function when params on the random endpoint are enabled.
@@ -66,14 +80,14 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 	for (const [reqParam, value] of Object.entries(req.query)) {
 		if (!validFilters.has(reqParam)) {
 			res.status(400).send(`Could not return results. There could be an issue with your query param, '${reqParam}'.`)
-			logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey);
+			logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), await hashedApiKey);
 			return;
 		}
 		// Check to ensure relevant integer query params don't have words as values //
 		if (reqParam === 'maxplayers' || reqParam === 'playtime' || reqParam === 'yearpublished') {
 			if (typeof value === 'string' && !/\d/.test(value)) {
 				res.status(400).send(`Could not return results. There could be an issue with the value of one or more of your query params.`);
-				logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey);
+				logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), await hashedApiKey);
 				return;
 			}
 		}
@@ -114,7 +128,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 		});
 		const endTime = responseTimeStamp(false);
 		const responseTime = Number(endTime - startTime) / 1000000;
-		logger(req, res, responseTime, apiKey)
+		logger(req, res, responseTime, await hashedApiKey)
 		return;
 	} catch (e) {
 		res.status(500).send(e)
@@ -125,7 +139,7 @@ boardGamesRouter.get("/", async (req: Request, res: Response, next: NextFunction
 // GET random boardgame //
 boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFunction) => {
 	const startTime = responseTimeStamp(false);
-	const apiKey = getApiKey(req)
+	const hashedApiKey = getApiKey(req)
 
 	try {
 		const totalGames = await BoardGameService.findTotalGames(); // get total amount of games currently in database.
@@ -136,11 +150,11 @@ boardGamesRouter.get("/random", async (req: Request, res: Response, next: NextFu
 			res.status(200).json(randomGame);
 			const endTime = responseTimeStamp(false);
 			const responseTime = Number(endTime - startTime) / 1000000;
-			logger(req, res, responseTime, apiKey);
+			logger(req, res, responseTime, await hashedApiKey);
 			return;
 		} else {
 			res.status(400).send("Could not get random game.");
-			logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), apiKey)
+			logger(req, res, Number(responseTimeStamp(true, startTime) / 1000000), await hashedApiKey)
 			return;
 		}
 	} catch (error) {
@@ -154,20 +168,20 @@ boardGamesRouter.get("/gamename", async (req: Request, res: Response, next: Next
 	const startTime = responseTimeStamp(false);
 
 	const gameName: string | undefined = Object.keys(req.query)[0];
-	const apiKey = getApiKey(req)
+	const hashedApiKey = getApiKey(req)
 
 	try {
 		const boardgame: BoardGame[] | string = await BoardGameService.findGameByTitle(gameName)
 
 		if (boardgame === 'null') {
 			res.status(400).send("Game not found.")
-			logger(req, res, Number(responseTimeStamp(true, startTime)), apiKey)
+			logger(req, res, Number(responseTimeStamp(true, startTime)), await hashedApiKey)
 			return;
 		} else {
 			res.status(200).send(boardgame)
 			const endTime = responseTimeStamp(false);
 			const responseTime = Number(endTime - startTime) / 1000000;
-			logger(req, res, responseTime, apiKey)
+			logger(req, res, responseTime, await hashedApiKey)
 			return;
 		}
 
