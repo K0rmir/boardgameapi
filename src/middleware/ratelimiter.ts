@@ -8,12 +8,14 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
 
     const apiKey = req.headers['x-api-key'] as string;
 
-    if (!apiKey) {
-        res.status(401).json({ error: 'Unathorized. Api Key is missing.' })
-        console.log('Unathorized. Api Key is missing.')
-        logger(req, res, 'MISSING_KEY');
-        return;
-    } else if (apiKey) {
+    // if (!apiKey) {
+    //     console.log('Hello from the Rate Limiter!');
+    //     res.status(401).json({ error: 'Unathorized. Api Key is missing.' })
+    //     console.log('Unauthorized. Api Key is missing.')
+    //     logger(req, res, null, 'MISSING_KEY');
+    //     return;
+    // } else 
+    if (apiKey) {
         try {
 
             // Define time window for total requests
@@ -27,7 +29,7 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
             if (keyCount >= requestLimit) {
                 res.status(429).json({ error: 'Rate Limit Exceeded. Try again in one hour.' });
                 console.log('Rate Limit Exceeded. Try again in one hour.')
-                logger(req, res, apiKey);
+                logger(req, res, null, apiKey);
                 return
             } else {
                 next();

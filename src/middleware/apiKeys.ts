@@ -11,14 +11,12 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
   let hashedApiKey: string = '';
 
   if (!apiKey) {
-    res.status(401).json({ error: 'Unauthorized. Api Key is missing.' })
-    console.log('Unathorized. Api Key is missing.')
-    logger(req, res, 0, 'MISSING_KEY');
+    res.status(401).json({ error: 'Unauthorized. Api Key is missing.' });
+    console.log('Hello from the Valididate API Key Function!');
+    console.log('Unauthorized. Api Key is missing.');
+    logger(req, res, null, 'MISSING_KEY');
     return;
-
   } else if (apiKey) {
-
-
     try {
       const hashedKeys = await db.query('SELECT api_key FROM users');
       let isAuthenticated: boolean = false;
@@ -33,7 +31,7 @@ export async function validateApiKey(req: Request, res: Response, next: NextFunc
 
       if (!isAuthenticated) {
         res.status(401).json({ error: 'Unauthorized. Api key is incorrect.' });
-        logger(req, res, 0, `INVALID_KEY - ${hashedApiKey}`);
+        logger(req, res, null, `INVALID_KEY - ${hashedApiKey}`);
       }
 
       next();

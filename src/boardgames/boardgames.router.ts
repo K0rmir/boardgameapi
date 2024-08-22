@@ -20,14 +20,14 @@ const corsOptions = {
 //  Router Definition
 export const boardGamesRouter = express.Router();
 
-boardGamesRouter.use(cors(corsOptions), rateLimiter, validateApiKey)
+boardGamesRouter.use(cors(corsOptions), validateApiKey, rateLimiter)
 
 // Helper function to get apiKey for endpoint logging
-async function getApiKey(req: Request): Promise<string | undefined> {
+async function getApiKey(req: Request): Promise<string> {
 
 	const apiKey: string | string[] | undefined = req.headers['x-api-key'];
 	const hashedKeys = await db.query('SELECT api_key FROM users');
-	let hashedApiKey: string | undefined = ''
+	let hashedApiKey: string = ''
 
 	for (const hashedKey of hashedKeys.rows) {
 		if (await bcrypt.compare(apiKey as string, hashedKey.api_key)) {
