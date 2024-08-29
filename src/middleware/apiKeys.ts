@@ -29,7 +29,7 @@ export async function validateApiKey(
 
       if (!isAuthenticated) {
         res.status(401).json({ error: "Unauthorized. Api key is incorrect." });
-        logger(req, res, null, `INVALID_KEY - ${hashedApiKey}`);
+        logger(req, res, null, "INVALID_KEY");
         return;
       }
 

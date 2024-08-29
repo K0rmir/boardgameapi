@@ -10,7 +10,6 @@ export async function rateLimiter(
 ) {
   const requestLimit = 100;
   const apiKey = req.headers["x-api-key"] as string;
-  let hashedApiKey: string = ""; // this wouldn't be needed
 
   if (apiKey) {
     // Define time window for total requests
