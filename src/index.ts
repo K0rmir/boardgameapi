@@ -43,7 +43,7 @@ app.get("/utils/cron", async (req, res) => {
 
 // const startServer = async () => {
 //   try {
-//     // Check database connection
+//     // Check  connection
 //     await db.query("SELECT 1", (err, res) => {
 //       if (err) {
 //         console.error("Error executing query:", err.stack);

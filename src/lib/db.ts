@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const dbConnectionString = process.env.supabaseUrl;
+const dbConnectionString = process.env.DATABASE_URL;
 
 if (!dbConnectionString) {
-  throw new Error("supabaseUrl is not set in the environment variables"); // Throw error if no connection string is provided for database.
+  throw new Error("Database URL is not set in the environment variables"); // Throw error if no connection string is provided for database.
 }
 
 export const db = new pg.Pool({ connectionString: dbConnectionString });
