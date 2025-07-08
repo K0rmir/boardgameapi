@@ -1,11 +1,11 @@
 // Required External Modules
 
 import * as dotenv from "dotenv";
-import { db } from "./lib/db";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { boardGamesRouter } from "./boardgames/boardgames.router";
+import { boardGamesRouter } from "./app";
+
 import aggregateLogs from "./utils/cron";
 
 dotenv.config();
@@ -36,7 +36,7 @@ app.get("/utils/cron", async (req, res) => {
   }
 });
 
-// v For local host usage/testing comment out lines marked (*) and enable the below. Revert before pushing. v //
+// v For local host usage/testing comment out lines marked (*) and enable the below. Revert before pushing.
 
 // app.use("/src/boardgames", boardGamesRouter);
 // const PORT: number = parseInt(process.env.PORT as string, 10);
@@ -64,7 +64,5 @@ app.get("/utils/cron", async (req, res) => {
 // };
 
 // startServer();
-
-// // <(^.^)> //
 
 export default app;
