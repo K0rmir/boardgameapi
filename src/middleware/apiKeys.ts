@@ -14,10 +14,9 @@ export async function validateApiKey(
   const apiKey = req.headers["x-api-key"] as string; // define apiKey from headers of the request
 
   if (!apiKey) {
-    res.status(401).json({ error: "Unauthorized. Api Key is missing." });
     console.log("Unauthorized. Api Key is missing.");
-    logger(req, res, null, "MISSING_KEY");
-    return;
+   return res.status(401).json({ error: "Unauthorized. Api Key is missing." });
+
   } else if (apiKey) {
     try {
       let isAuthenticated: boolean = false;
@@ -28,9 +27,7 @@ export async function validateApiKey(
       }
 
       if (!isAuthenticated) {
-        res.status(401).json({ error: "Unauthorized. Api key is incorrect." });
-        logger(req, res, null, "INVALID_KEY");
-        return;
+        return res.status(401).json({ error: "Unauthorized. Api key is incorrect." });
       }
 
       next();

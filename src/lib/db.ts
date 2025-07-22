@@ -1,4 +1,3 @@
-// Connect to Supabase database //
 import pg from "pg";
 import dotenv from "dotenv";
 
@@ -17,5 +16,3 @@ db.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
 });
-
-console.log("Testing git push with new ssh")

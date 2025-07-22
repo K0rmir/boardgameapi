@@ -1,13 +1,12 @@
-import { BoardGame } from "./boardgame.interface";
+import { BoardGame } from "../types";
 import { db } from "../lib/db";
 
-
-// Return single boardgame with game name as parameter //
-export const fetchGameByTitle = async (gameName: string | undefined): Promise<BoardGame[] | string> => {
+export const getGameByTitle = async (gameName: string | undefined): Promise<BoardGame[] | string> => {
 
     try {
-        const res = await db.query('SELECT * FROM boardgames WHERE game_name = $1', [gameName]);
+        const res = await db.query('SELECT * FROM boardgames WHERE game_name ILIKE $1', [gameName]);
         if (res.rows.length === 0) {
+            console.log("Game is null")
             return 'null'
         } else {
             return res.rows

@@ -1,7 +1,8 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import { validateApiKey } from "./middleware/apiKeys";
 import { rateLimiter } from "./middleware/ratelimiter";
+import { registerBoardGameRoutes } from "./Routes/BoardGames";
 
 // Cors configuration
 const corsOptions = {
@@ -14,3 +15,5 @@ const corsOptions = {
 export const boardGamesRouter = express.Router();
 
 boardGamesRouter.use(cors(corsOptions), validateApiKey, rateLimiter);
+
+registerBoardGameRoutes(boardGamesRouter)
