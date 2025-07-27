@@ -1,7 +1,5 @@
-import {NextFunction, Request, Response, Router} from "express";
-import { boardGamesRouter } from "../../app";
+import { Request, Response, Router} from "express";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
-import { getHashedApiKey } from "../../middleware/apiKeys";
 import { logger } from "../../middleware/logger";
 import { calculateTotalGames } from "../../utils/CalculateTotalGames";
 import { fetchRandomGame } from "../../Services/FetchRandomGame";
@@ -10,10 +8,9 @@ import { fetchRandomGame } from "../../Services/FetchRandomGame";
 export function GetRandomGame(boardGamesRouter: Router) {
     boardGamesRouter.get(
         "/random",
-        async (req: Request, res: Response, next: NextFunction) => {
-            const apiKey = req.headers["x-api-key"] as string;
+        async (req: Request, res: Response) => {
             const startTime = responseTimeStamp(false);
-            const hashedApiKey = getHashedApiKey(apiKey);
+            const hashedApiKey = req.hashedApiKey
 
             try {
                 const totalGames = await calculateTotalGames(); // get total amount of games currently in database.
@@ -23,7 +20,7 @@ export function GetRandomGame(boardGamesRouter: Router) {
                 if (randomGame) {
                     const endTime = responseTimeStamp(false);
                     const responseTime = Number(endTime - startTime) / 1000000;
-                    await logger(req, res, responseTime, await hashedApiKey);
+                    await logger(req, res, responseTime, hashedApiKey);
                     res.status(200).json(randomGame);
 
 
@@ -33,7 +30,7 @@ export function GetRandomGame(boardGamesRouter: Router) {
                         req,
                         res,
                         Number(responseTimeStamp(true, startTime) / 1000000),
-                        await hashedApiKey
+                        hashedApiKey
                     );
                 }
             } catch (error) {

@@ -1,6 +1,5 @@
 import { Request, Response, Router} from "express";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
-import { getHashedApiKey } from "../../middleware/apiKeys";
 import { logger } from "../../middleware/logger";
 import { getGameByTitle } from "../../Services/FetchGameByTitle";
 import { BoardGame } from "../../types";
@@ -9,12 +8,10 @@ export function GetGameByTitle(boardGamesRouter: Router) {
     boardGamesRouter.get(
         "/:gamename",
         async (req: Request, res: Response) => {
-            const apiKey = req.headers["x-api-key"] as string;
             const startTime = responseTimeStamp(false);
 
             const gameName: string = req.params.gamename
-            console.log("request =", req.params)
-            const hashedApiKey = getHashedApiKey(apiKey);
+            const hashedApiKey = req.hashedApiKey
 
             try {
                 const boardgame: BoardGame[] | string =
@@ -26,14 +23,14 @@ export function GetGameByTitle(boardGamesRouter: Router) {
                         req,
                         res,
                         Number(responseTimeStamp(true, startTime)),
-                        await hashedApiKey
+                        hashedApiKey
                     );
                     return;
                 } else {
                     res.status(200).send(boardgame);
                     const endTime = responseTimeStamp(false);
                     const responseTime = Number(endTime - startTime) / 1000000;
-                    await logger(req, res, responseTime, await hashedApiKey);
+                    await logger(req, res, responseTime, hashedApiKey);
                     return;
                 }
             } catch (error) {

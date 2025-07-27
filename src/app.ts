@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { validateApiKey } from "./middleware/apiKeys";
+import { validateApiKey } from "./middleware/ValidateApiKey";
 import { rateLimiter } from "./middleware/ratelimiter";
 import { registerBoardGameRoutes } from "./Routes/BoardGames";
 

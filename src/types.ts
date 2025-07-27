@@ -1,3 +1,5 @@
+import "express";
+
 export interface BaseBoardGame {
     name: string;
     description: string
@@ -21,4 +23,12 @@ export type Filters = {
     game_category?: string[],
     game_mechanic?: string[],
     game_designer?: string[]
+}
+
+// Modify Request type to include keys for use in other functions
+declare module "express-serve-static-core" {
+    interface Request {
+        validatedApiKey: string
+        hashedApiKey: string
+    }
 }

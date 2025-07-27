@@ -1,7 +1,6 @@
-import {NextFunction, Request, Response, Router} from "express";
+import { Request, Response, Router} from "express";
 import { Filters } from "../../types";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
-import { getHashedApiKey } from "../../middleware/apiKeys";
 import { logger } from "../../middleware/logger";
 import { fetchBoardgames } from "../../Services/FetchAllBoardGames";
 import { calculateTotalResultCount } from "../../utils/CalculateTotalResultCount";
@@ -11,10 +10,9 @@ import { buildPaginationLinks } from "../../utils/BuildPaginationLinks";
 export function GetAllGames(boardGamesRouter: Router) {
     boardGamesRouter.get(
         "/",
-        async (req: Request, res: Response, next: NextFunction) => {
-            const apiKey = req.headers["x-api-key"] as string;
+        async (req: Request, res: Response) => {
             const startTime = responseTimeStamp(false);
-            const hashedApiKey = getHashedApiKey(apiKey);
+            const hashedApiKey = req.hashedApiKey;
 
             // Define Set of valid filters. This set and loop should be moved into a helper when params on the random endpoint are enabled.
             const validFilters = new Set([
@@ -41,7 +39,7 @@ export function GetAllGames(boardGamesRouter: Router) {
                         req,
                         res,
                         Number(responseTimeStamp(true, startTime) / 1000000),
-                        await hashedApiKey
+                        hashedApiKey
                     );
                     return;
                 }
@@ -61,7 +59,7 @@ export function GetAllGames(boardGamesRouter: Router) {
                             req,
                             res,
                             Number(responseTimeStamp(true, startTime) / 1000000),
-                            await hashedApiKey
+                            hashedApiKey
                         );
                         return;
                     }
@@ -132,7 +130,7 @@ export function GetAllGames(boardGamesRouter: Router) {
                 });
                 const endTime = responseTimeStamp(false);
                 const responseTime = Number(endTime - startTime) / 1000000;
-                await logger(req, res, responseTime, await hashedApiKey);
+                await logger(req, res, responseTime, hashedApiKey);
                 return;
             } catch (e) {
                 res.status(500).send(e);
