@@ -1,7 +1,7 @@
 import { Request, Response, Router} from "express";
 import { Filters } from "../../types";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
-import { logger } from "../../middleware/logger";
+import { Logger } from "../../utils/Logger";
 import { fetchBoardgames } from "../../Services/FetchAllBoardGames";
 import { calculateTotalResultCount } from "../../utils/CalculateTotalResultCount";
 import { buildPaginationLinks } from "../../utils/BuildPaginationLinks";
@@ -11,8 +11,7 @@ export function GetAllGames(boardGamesRouter: Router) {
     boardGamesRouter.get(
         "/",
         async (req: Request, res: Response) => {
-            const startTime = responseTimeStamp(false);
-            const hashedApiKey = req.hashedApiKey;
+            const startTime = responseTimeStamp();
 
             // Define Set of valid filters. This set and loop should be moved into a helper when params on the random endpoint are enabled.
             const validFilters = new Set([
@@ -35,13 +34,7 @@ export function GetAllGames(boardGamesRouter: Router) {
                         .send(
                             `Could not return results. There could be an issue with your query param, '${requestParam}'.`
                         );
-                    await logger(
-                        req,
-                        res,
-                        Number(responseTimeStamp(true, startTime) / 1000000),
-                        hashedApiKey
-                    );
-                    return;
+                    await Logger(req, res.statusCode, responseTimeStamp(startTime))
                 }
                 // Check to ensure relevant integer query params don't have words as values //
                 if (
@@ -55,13 +48,7 @@ export function GetAllGames(boardGamesRouter: Router) {
                             .send(
                                 `Could not return results. There could be an issue with the value of one or more of your query params.`
                             );
-                        await logger(
-                            req,
-                            res,
-                            Number(responseTimeStamp(true, startTime) / 1000000),
-                            hashedApiKey
-                        );
-                        return;
+                        await Logger(req,res.statusCode, responseTimeStamp(startTime))
                     }
                 }
             }
@@ -105,19 +92,11 @@ export function GetAllGames(boardGamesRouter: Router) {
             }
 
             try {
-                const boardgames = await fetchBoardgames(
-                    filters,
-                    page,
-                    limit
-                );
+                const boardgames = await fetchBoardgames(filters, page, limit);
                 const totalCount = await calculateTotalResultCount(filters);
                 const totalPages = Math.ceil(totalCount / limit); // declare total number of pages here for pagination metadata
-                const { nextPage, prevPage } = buildPaginationLinks(
-                    req,
-                    page,
-                    totalPages
-                ); // call helper function to build pagination next/prev page links
-
+                const { nextPage, prevPage } = buildPaginationLinks(req, page, totalPages); // call helper function to build pagination next/prev page links
+                await Logger(req, res.statusCode, responseTimeStamp(startTime));
                 res.status(200).send({
                     // send object of pagination metadata and boardgames results as response
                     totalCount,
@@ -128,13 +107,8 @@ export function GetAllGames(boardGamesRouter: Router) {
                     resultsReturned: boardgames.length,
                     results: boardgames,
                 });
-                const endTime = responseTimeStamp(false);
-                const responseTime = Number(endTime - startTime) / 1000000;
-                await logger(req, res, responseTime, hashedApiKey);
-                return;
             } catch (e) {
                 res.status(500).send(e);
-                return;
             }
         }
     );

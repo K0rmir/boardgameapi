@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { db } from "../lib/db";
-import { logger } from "./logger";
 
 export async function rateLimiter(
   req: Request,
@@ -27,7 +26,6 @@ export async function rateLimiter(
 
       if (keyCount >= requestLimit) {
         console.error("Rate Limit Exceeded. Please wait and try again.");
-        await logger(req, res, null, hashedApiKey);
         return res
             .status(429)
             .json({ error: "Rate Limit Exceeded. Try again in one hour." });

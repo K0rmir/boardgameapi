@@ -1,8 +1,8 @@
-// Helper function to calculate response time //
-export function responseTimeStamp(errorStatus: boolean, startTime?: number): number {
-    if (errorStatus && startTime !== undefined) {
+export function responseTimeStamp(startTime?: number): number {
+    if (startTime) {
         const endTime = Number(process.hrtime.bigint());
-        return endTime - startTime;
+        const responseTime = (endTime - startTime) / 1000000
+        return parseFloat(responseTime.toFixed(2))
     } else {
         return Number(process.hrtime.bigint());
     }
