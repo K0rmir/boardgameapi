@@ -1,8 +1,8 @@
-import { Filters, Boardgames } from "../types";
+import { Filters, BoardGame } from "../types";
 import { db } from "../lib/db"
 
 // Fetch all BoardGames  //
-export const fetchBoardgames = async (filters: Filters, page: number, limit: number): Promise<Boardgames> => {
+export const fetchBoardgames = async (filters: Filters, page: number, limit: number): Promise<BoardGame[]> => {
 
     const offset = (page - 1) * limit;
 

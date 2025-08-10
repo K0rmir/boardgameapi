@@ -25,10 +25,10 @@ export async function rateLimiter(
       const keyCount = data.rows[0].count;
 
       if (keyCount >= requestLimit) {
-        console.error("Rate Limit Exceeded. Please wait and try again.");
+        console.error("Rate Limit Exceeded. Slow you down buh!.");
         return res
             .status(429)
-            .json({ error: "Rate Limit Exceeded. Try again in one hour." });
+            .json({ error: "Rate Limit Exceeded. " });
       } else {
         next();
       }

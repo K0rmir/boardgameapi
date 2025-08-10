@@ -1,20 +1,12 @@
-import "express";
-
-export interface BaseBoardGame {
+export type BoardGame = {
+    id: number;
     name: string;
     description: string
     minPlayers: number
     maxPlayers: number
 }
 
-export interface BoardGame extends BaseBoardGame {
-    id: number;
-}
-
-export type Boardgames = BoardGame[]
-
-
-// Interface for query parameters //
+// Type for query parameters //
 export type Filters = {
     game_description?: boolean,
     max_players?: number,
