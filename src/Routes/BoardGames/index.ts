@@ -4,7 +4,7 @@ import { GetGameByTitle } from "./GetGameByTitle";
 import { GetRandomGame } from "./GetRandomGame";
 
 export function registerBoardGameRoutes(router: Router) {
-    GetAllGames(router)
-    GetGameByTitle(router)
     GetRandomGame(router)
+    GetGameByTitle(router)
+    GetAllGames(router)
 }

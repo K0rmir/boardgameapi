@@ -12,7 +12,7 @@ export function GetRandomGame(boardGamesRouter: Router) {
             const startTime = responseTimeStamp()
 
             try {
-                const totalGames = await calculateTotalGames(); // get total amount of games currently in database.
+                const totalGames = await calculateTotalGames(); // get total amount of games currently in database. This value could do with being cached.
                 const randomNumber = Math.ceil(Math.random() * totalGames); // generate random number between 1 and totalGames
                 const randomGame = await fetchRandomGame(randomNumber); // get random game by using randomNumber as OFFSET
 

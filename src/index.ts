@@ -9,21 +9,20 @@ import {db} from "./lib/db";
 
 dotenv.config();
 
-// App Variables
-
 if (!process.env.PORT) {
-  process.exit(1);
+  process.exit(1)
 }
 
-const PORT: string = process.env.PORT; // (*)
-const app = express();
+const PORT: string = process.env.PORT
+const app = express()
 
 // App Configuration
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use("/boardgames", boardGamesRouter); // (*)
+app.use(helmet())
+app.use(cors())
+app.use(express.json())
+app.use("/boardgames", boardGamesRouter)
 
+// TODO: Move this somewhere more appropriate
 // Cron route/endpoint //
 app.get("/utils/cron", async (req, res) => {
   try {
@@ -35,11 +34,8 @@ app.get("/utils/cron", async (req, res) => {
   }
 });
 
-// v For local host usage/testing comment out lines marked (*) and enable the below. Revert before pushing.
 
-// app.use("/src/boardgames", boardGamesRouter);
-// const PORT: number = parseInt(process.env.PORT as string, 10);
-
+// Express server for local usage/testing
 const startServer = async () => {
   try {
     // Check  connection
