@@ -1,5 +1,5 @@
-import { BoardGame } from "../types";
-import { db } from "../lib/db";
+import { BoardGame } from "../../types";
+import { db } from "../../lib/db";
 
 export const getGameByTitle = async (gameName: string | undefined): Promise<BoardGame[] | string> => {
 

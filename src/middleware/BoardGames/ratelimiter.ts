@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { db } from "../lib/db";
+import { db } from "../../lib/db";
 
 export async function rateLimiter(
   req: Request,

@@ -1,5 +1,5 @@
-import { BoardGame } from "../types";
-import { db } from "../lib/db";
+import { BoardGame } from "../../types";
+import { db } from "../../lib/db";
 
 // Get random game using random number between 1 & total games as OFFSET from DB //
 export const fetchRandomGame = async (randomNumber: number): Promise<BoardGame[]> => {

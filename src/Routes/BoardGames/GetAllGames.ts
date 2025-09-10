@@ -2,7 +2,7 @@ import { Request, Response, Router} from "express";
 import { Filters } from "../../types";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
 import { Logger } from "../../utils/Logger";
-import { fetchBoardgames } from "../../Services/FetchAllBoardGames";
+import { fetchBoardgames } from "../../Services/BoardGames/FetchAllBoardGames";
 import { calculateTotalResultCount } from "../../utils/CalculateTotalResultCount";
 import { buildPaginationLinks } from "../../utils/BuildPaginationLinks";
 

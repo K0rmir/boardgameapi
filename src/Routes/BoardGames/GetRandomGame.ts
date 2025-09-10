@@ -2,7 +2,7 @@ import { Request, Response, Router} from "express";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
 import { Logger } from "../../utils/Logger";
 import { calculateTotalGames } from "../../utils/CalculateTotalGames";
-import { fetchRandomGame } from "../../Services/FetchRandomGame";
+import { fetchRandomGame } from "../../Services/BoardGames/FetchRandomGame";
 
 
 export function GetRandomGame(boardGamesRouter: Router) {

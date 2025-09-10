@@ -1,5 +1,5 @@
-import { Filters, BoardGame } from "../types";
-import { db } from "../lib/db"
+import { Filters, BoardGame } from "../../types";
+import { db } from "../../lib/db"
 
 // Fetch all BoardGames  //
 export const fetchBoardgames = async (filters: Filters, page: number, limit: number): Promise<BoardGame[]> => {

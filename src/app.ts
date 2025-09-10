@@ -1,19 +1,12 @@
 import express from "express";
-import cors from "cors";
-import { validateApiKey } from "./middleware/ValidateApiKey";
-import { rateLimiter } from "./middleware/ratelimiter";
-import { registerBoardGameRoutes } from "./Routes/BoardGames";
+import {boardGamesRouter} from "./Routers/BoardGames";
+import {apiKeyRegisterRouter} from "./Routers/ApiKeyRegister";
+import helmet from "helmet";
 
-// Cors configuration
-const corsOptions = {
-    origin: "*",
-    METHODS: ["GET"],
-    optionsSuccessStatus: 204,
-};
+export const app = express()
 
-//  Router Definition
-export const boardGamesRouter = express.Router();
+app.use(express.json())
+app.use(helmet())
 
-boardGamesRouter.use(cors(corsOptions), validateApiKey, rateLimiter);
-
-registerBoardGameRoutes(boardGamesRouter)
+app.use("/boardgames", boardGamesRouter)
+app.use("/boardRegister", apiKeyRegisterRouter)

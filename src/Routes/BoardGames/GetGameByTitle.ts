@@ -1,7 +1,7 @@
 import { Request, Response, Router} from "express";
 import { responseTimeStamp } from "../../utils/ResponseTimeStamp";
 import { Logger } from "../../utils/Logger";
-import { getGameByTitle } from "../../Services/FetchGameByTitle";
+import { getGameByTitle } from "../../Services/BoardGames/FetchGameByTitle";
 import { BoardGame } from "../../types";
 
 export function GetGameByTitle(boardGamesRouter: Router) {

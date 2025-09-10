@@ -1,11 +1,7 @@
 import * as dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import { boardGamesRouter } from "./app";
-
 import aggregateLogs from "./utils/cron";
 import {db} from "./lib/db";
+import { app } from "./app";
 
 dotenv.config();
 
@@ -14,17 +10,11 @@ if (!process.env.PORT) {
 }
 
 const PORT: string = process.env.PORT
-const app = express()
 
-// App Configuration
-app.use(helmet())
-app.use(cors())
-app.use(express.json())
-app.use("/boardgames", boardGamesRouter)
 
 // TODO: Move this somewhere more appropriate
 // Cron route/endpoint //
-app.get("/utils/cron", async (req, res) => {
+/*app.get("/utils/cron", async (req, res) => {
   try {
     await aggregateLogs(req, res);
     res.status(200).send("Cron Job Completed");
@@ -32,11 +22,11 @@ app.get("/utils/cron", async (req, res) => {
     console.error("Cron Job Failed:", error);
     res.status(500).send("Cron job failed");
   }
-});
+});*/
 
 
 // Express server for local usage/testing
-const startServer = async () => {
+/*const startServer = async () => {
   try {
     // Check  connection
     db.query("SELECT 1", (err, res) => {
@@ -58,6 +48,6 @@ const startServer = async () => {
   }
 };
 
-startServer();
+startServer();*/
 
 export default app;
