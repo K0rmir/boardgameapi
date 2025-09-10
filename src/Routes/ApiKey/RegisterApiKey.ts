@@ -1,5 +1,6 @@
 import {Router, Response, Request} from "express";
 import { postHashedApiKey } from "../../Services/ApiKey/PostHashedApiKey";
+import bcrypt from "bcrypt";
 
 export type EmailRequestBody = {
     email: string
@@ -28,7 +29,7 @@ function generateApiKey() {
 
 async function hashApiKey(apiKey: string): Promise<string> {
     try {
-        return await Bun.password.hash(apiKey, { algorithm: "bcrypt" })
+        return await bcrypt.hash(apiKey, 10)
     } catch (error) {
         console.error("Could not hash api key:", error)
         throw error

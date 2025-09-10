@@ -9,4 +9,4 @@ app.use(express.json())
 app.use(helmet())
 
 app.use("/boardgames", boardGamesRouter)
-app.use("/boardRegister", apiKeyRegisterRouter)
+app.use("/boardapiRegister", apiKeyRegisterRouter)

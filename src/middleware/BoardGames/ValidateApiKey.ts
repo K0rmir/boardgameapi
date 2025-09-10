@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { db } from "../../lib/db";
+import bcrypt from "bcrypt"
 
 export async function validateApiKey(
   req: Request,
@@ -34,7 +35,7 @@ export async function getHashedApiKey(apiKey: string) {
   const hashedKeys = await db.query("SELECT api_key FROM users");
 
   for (const hashedKey of hashedKeys.rows) {
-    if (await Bun.password.verify(apiKey, hashedKey.api_key)) {
+    if (await bcrypt.compare(apiKey, hashedKey.api_key)) {
       return hashedKey.api_key
     }
   }
