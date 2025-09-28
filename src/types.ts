@@ -1,9 +1,15 @@
 export type BoardGame = {
     id: number;
-    name: string;
-    description: string
-    minPlayers: number
-    maxPlayers: number
+    game_name: string;
+    game_description: string
+    year_published: number
+    min_players: number
+    max_players: number
+    play_time: number
+    max_playtime: number
+    game_category: string[],
+    game_mechanic: string[],
+    game_designer: string[]
 }
 
 // Type for query parameters //
@@ -17,7 +23,7 @@ export type Filters = {
     game_designer?: string[]
 }
 
-// Modify Request type to include keys for use in other functions
+// Modify express Request type to include api keys for use in other functions
 declare module "express-serve-static-core" {
     interface Request {
         validatedApiKey: string
