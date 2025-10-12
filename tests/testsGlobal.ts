@@ -27,3 +27,10 @@ export async function callEndpointGameName(gameName: string) {
         .set(headers)
         .expect(200)
 }
+
+export async function callEndpointRandom() {
+    return await request(baseUrl)
+        .get("/boardgames/random")
+        .set(headers)
+        .expect(200)
+}
