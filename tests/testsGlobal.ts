@@ -12,8 +12,11 @@ export const baseUrl = "https://boardapi.vercel.app"
 // Might be nice to call the query params with specific types and a obj
 
 export async function callEndpointBoardgames(params?: string | undefined) {
+
+    const paramsWithPageSize = params ? `${params}&pagesize=5` : ""
+
     return await request(baseUrl)
-        .get(`/boardgames/${params ? params : ""}&pagesize=5`)
+        .get(`/boardgames/?${paramsWithPageSize}`)
         .set(headers)
         .expect(200)
 }
