@@ -12,8 +12,7 @@ export function GetGameByTitle(boardGamesRouter: Router) {
             const gameName: string = req.params.gamename
 
             try {
-                const boardgame: BoardGame[] | string =
-                    await getGameByTitle(gameName);
+                const boardgame: BoardGame = await getGameByTitle(gameName);
 
                 if (boardgame === "null") {
                     await Logger(req, res.statusCode, responseTimeStamp(startTime))

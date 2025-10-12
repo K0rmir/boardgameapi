@@ -23,6 +23,20 @@ export type Filters = {
     game_designer?: string[]
 }
 
+type Metadata = {
+    totalCount: number,
+    totalPages: number,
+    currentPage: number,
+    nextPage: number,
+    prevPage: number,
+    resultsReturned: number
+}
+
+export type BoardGamesReturn = {
+    meta: Metadata
+    results: BoardGame[]
+}
+
 // Modify express Request type to include api keys for use in other functions
 declare module "express-serve-static-core" {
     interface Request {
