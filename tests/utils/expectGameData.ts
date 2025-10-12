@@ -7,5 +7,3 @@ export async function expectGameData(game: BoardGame) {
     await expect(game.game_category).toContain("Dice Rolling")
 }
 
-// which fields do you want to expect?
-

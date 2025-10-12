@@ -12,7 +12,7 @@ export async function validateApiKey(
 
   if (!apiKey) {
     console.error("Unauthorized. Api Key is missing.");
-    return res.status(401).json({ error: "Unauthorized. Api Key is missing." });
+    return res.status(401).json({ error: "Unauthorized. Api key is missing." });
   } else {
     try {
       const hashedApiKey = await getHashedApiKey(apiKey);
